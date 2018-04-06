@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Class-Path: jsr305-1.3.9.jar commons-io-2.6.jar flexmark-formatter-0.3
+ 2.18.jar j2objc-annotations-1.1.jar flexmark-0.32.18.jar error_prone_
+ annotations-2.0.18.jar flexmark-util-0.32.18.jar freemarker-2.3.23.ja
+ r animal-sniffer-annotations-1.14.jar guava-23.0.jar flexmark-ext-tab
+ les-0.32.18.jar
+Main-Class: cn.piumnl.mdlib.Application
+
