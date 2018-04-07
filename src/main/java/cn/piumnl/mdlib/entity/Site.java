@@ -23,6 +23,7 @@ public class Site implements Serializable {
     private static final long serialVersionUID = -1764513206170007080L;
 
     private static final String TRUE = "true";
+    public static final String STATIC_ML_ICO = "static/ml.ico";
 
     private List<File> staticPath;
 
@@ -61,11 +62,9 @@ public class Site implements Serializable {
         if (TRUE.equalsIgnoreCase(defaultStatic)) {
             this.defaultStaticPath = true;
         }
-        // 是否提供默认的静态资源
+
+        // 图标设置
         this.icon = properties.getProperty("icon");
-        if (StringUtil.isEmpty(this.icon)) {
-            this.icon = "static/ml.ico";
-        }
 
         String li = "list";
         this.list = Stream.of(properties.getProperty(li, ""))

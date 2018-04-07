@@ -2,13 +2,6 @@ package cn.piumnl.mdlib;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.JarURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,12 +11,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarFile;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-
-import freemarker.template.TemplateException;
 
 import cn.piumnl.mdlib.entity.ArchiveIndex;
 import cn.piumnl.mdlib.entity.Article;
@@ -32,7 +21,9 @@ import cn.piumnl.mdlib.entity.Site;
 import cn.piumnl.mdlib.template.CollapsibleTemplate;
 import cn.piumnl.mdlib.template.ListTemplate;
 import cn.piumnl.mdlib.template.MarkdownTemplate;
+import cn.piumnl.mdlib.template.SingleTemplate;
 import cn.piumnl.mdlib.util.FileUtil;
+import cn.piumnl.mdlib.util.ResourceUtil;
 import cn.piumnl.mdlib.util.StringUtil;
 
 /**
@@ -52,21 +43,22 @@ public class Processor {
         this.site = site;
     }
 
-    public void processor() throws IOException, TemplateException {
+    public void processor() throws IOException {
         // 删除输出目录所有文件
         deleteAllFiles(site.getOut());
         if (site.isDefaultStaticPath()) {
             if (FileUtil.isJar()) {
-                try {
-                    JarURLConnection connection =
-                            (JarURLConnection) this.getClass().getResource("").toURI().toURL().openConnection();
-                    JarFile jarFile = connection.getJarFile();
-                    jarFile.stream()
-                           .map(ZipEntry::getName)
-                           .filter(name -> name.startsWith("static/") && !name.endsWith("/"))
-                           .forEach(name -> copy(jarFile, name));
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
+                ResourceUtil.copyJarResource(site.getOut(), name -> name.startsWith("static/") && !name.endsWith("/"));
+            } else {
+                site.getStaticPath().add(FileUtil.classPath("static"));
+            }
+        } else {
+            if (StringUtil.isEmpty(site.getIcon())) {
+                site.setIcon(Site.STATIC_ML_ICO);
+                if (FileUtil.isJar()) {
+                    ResourceUtil.copyJarResource(site.getOut(), name -> StringUtil.equals(name, Site.STATIC_ML_ICO));
+                } else {
+                    site.getStaticPath().add(FileUtil.classPath(Site.STATIC_ML_ICO));
                 }
             }
         }
@@ -89,7 +81,7 @@ public class Processor {
         renderSingle();
     }
 
-    private void renderSingle() throws IOException, TemplateException {
+    private void renderSingle() throws IOException {
         for (Library lib : site.getSingle()) {
 
             List<String> dir = lib.getDir();
@@ -102,7 +94,7 @@ public class Processor {
                 file = new File(dir.get(0));
             }
 
-            String renderContent = FileUtil.render(new MarkdownTemplate(site, file));
+            String renderContent = FileUtil.render(new SingleTemplate(site, file));
 
             // 输出
             Path resolve = resolvePath(site, lib.getUrl());
@@ -118,43 +110,11 @@ public class Processor {
         }
     }
 
-    private void copy(JarFile jarFile, String name) {
-        URL url;
-        try {
-            url = new URI("jar:file:/" + jarFile.getName().replaceAll("\\\\", "/") + "!/" + name).toURL();
-        } catch (MalformedURLException | URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-
-        Path resolve = site.getOut().resolve(name);
-
-        if (Files.notExists(resolve)) {
-            if (Files.notExists(resolve.getParent())) {
-                try {
-                    Files.createDirectories(resolve.getParent());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        try (InputStream inputStream = url.openStream();
-             OutputStream outputStream = Files.newOutputStream(resolve);) {
-
-            byte[] data = new byte[1024];
-            int number;
-            while ((number = inputStream.read(data)) != -1) {
-                outputStream.write(data, 0, number);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void renderCollapsible() throws IOException, TemplateException {
+    private void renderCollapsible() throws IOException {
         for (Library lib : site.getCollapsible()) {
 
             // 指定要生成的目录
-            List<Article> collect = getArticles(site, lib, getAllFile());
+            List<Article> collect = getArticles(site, lib, allFile);
 
             // 渲染
             // 指定一个 8 ，一般可能不会超过 8，默认为16
@@ -197,9 +157,9 @@ public class Processor {
         }
     }
 
-    private void renderList() throws IOException, TemplateException {
+    private void renderList() throws IOException {
         for (Library lib : site.getList()) {
-            List<Article> collect = getArticles(site, lib, getAllFile());
+            List<Article> collect = getArticles(site, lib, allFile);
 
             Collections.sort(collect);
 
@@ -252,12 +212,12 @@ public class Processor {
     private void renderMd(Path path) {
         try {
             renderMd(path.toFile(), path.getParent());
-        } catch (IOException | TemplateException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void renderMd(File file, Path root) throws IOException, TemplateException {
+    private void renderMd(File file, Path root) throws IOException {
         File[] subFiles = file.listFiles();
 
         if (subFiles == null) {
@@ -308,9 +268,5 @@ public class Processor {
                 LOGGER.warning(StringUtil.format("'{}' not copy, because it is not directory or no exist!", path));
             }
         }
-    }
-
-    public List<String> getAllFile() {
-        return allFile;
     }
 }
