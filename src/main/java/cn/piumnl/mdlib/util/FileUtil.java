@@ -104,14 +104,18 @@ public class FileUtil {
      * @throws IOException       .
      * @throws TemplateException .
      */
-    public static String render(Object dataModel, String ftlPath) throws IOException, TemplateException {
+    public static String render(Object dataModel, String ftlPath) throws IOException {
         Template template = cfg.getTemplate(ftlPath);
         StringWriter out = new StringWriter();
-        template.process(dataModel, out);
+        try {
+            template.process(dataModel, out);
+        } catch (TemplateException e) {
+            throw new RuntimeException(e);
+        }
         return out.toString();
     }
 
-    public static String render(LibraryTemplate template) throws IOException, TemplateException {
+    public static String render(LibraryTemplate template) throws IOException {
         return render(template.dataModel(), template.ftlPath());
     }
 
