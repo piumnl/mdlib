@@ -1,6 +1,6 @@
+<#-- @ftlvariable name="content" type="java.lang.String" -->
 <#-- @ftlvariable name="icon" type="java.lang.String" -->
 <#-- @ftlvariable name="uri" type="java.lang.String" -->
-<#-- @ftlvariable name="articles" type="java.util.List<cn.piumnl.mdlib.entity.Article>" -->
 <#-- @ftlvariable name="libraries" type="java.util.List<cn.piumnl.mdlib.entity.Library>" -->
 <#-- @ftlvariable name="siteName" type="java.lang.String" -->
 <#-- @ftlvariable name="title" type="java.lang.String" -->
@@ -14,21 +14,11 @@
     <link rel="shortcut icon" href="${icon}" title="Favicon" />
     <link href="${uri}/static/css/icon.css" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="${uri}static/css/materialize.min.css" media="screen,projection" />
+    <link rel="stylesheet" href="${uri}/static/github.css" type="text/css"/>
+    <link rel="stylesheet" href="${uri}/static/mdlib.css" type="text/css"/>
     <style>
-        #content {
-            width:80%;
-            margin: auto;
-        }
-        .mdlib-collection {
-            border-top: 1px solid #ddd;
-            border-right: 1px solid #ddd;
-            border-left: 1px solid #ddd;
-        }
         nav {
             background-color: #fff;
-        }
-        .mdlib-title {
-            margin-left: 1rem;
         }
         .mdlib-title a {
             color: #424242;
@@ -38,25 +28,20 @@
 <body>
     <nav>
         <div class="nav-wrapper">
-            <div class="mdlib-title">
-                <a href="#" class="brand-logo">${siteName}</a>
-                <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <#list libraries as path>
-                    <li><a href="${path.url}">${path.name}</a></li>
-                </#list>
-                </ul>
-            </div>
+            <a href="#" class="brand-logo">${siteName}</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <#list libraries as path>
+                        <li><a href="${path.url}">${path.name}</a></li>
+                    </#list>
+            </ul>
         </div>
     </nav>
 
-    <div id="content">
-        <div class="collection mdlib-collection">
-        <#list articles as article>
-            <a href="${article.url}" class="collection-item">${article.name}</a>
-        </#list>
+    <div class="mdlib-md-body">
+        <div class="mth-layout mth-shadow mth-card">
+            ${content}
         </div>
     </div>
-
     <script type="text/javascript" src="${uri}static/js/jquery-3.2.1.min.js"></script>
     <script src="${uri}static/js/materialize.min.js"></script>
 </body>
