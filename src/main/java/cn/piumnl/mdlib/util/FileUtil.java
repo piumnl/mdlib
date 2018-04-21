@@ -170,22 +170,33 @@ public class FileUtil {
 
         for (File f : files) {
             if (f.isDirectory()) {
-                deleteAllFiles(f);
-                f.delete();
+                deleteFile(f);
             } else {
                 if (f.exists()) {
-                    deleteAllFiles(f);
-                    f.delete();
+                    deleteFile(f);
                 }
             }
         }
     }
 
+    private static void deleteFile(File f) {
+        deleteAllFiles(f);
+        if (!f.delete()) {
+            RefelectUtil.LOGGER.warning(StringUtil.format("can't delete {}", f.getAbsolutePath()));
+        }
+    }
+
     public static void createFile(Path resolve) throws IOException {
         if (Files.notExists(resolve)) {
-            if (Files.notExists(resolve.getParent())) {
-                Files.createDirectories(resolve.getParent());
+            Path parent = resolve.getParent();
+            if (parent == null) {
+                parent = resolve.toAbsolutePath().getParent();
             }
+
+            if (parent != null && Files.notExists(parent)) {
+                Files.createDirectories(parent);
+            }
+
             Files.createFile(resolve);
         }
     }

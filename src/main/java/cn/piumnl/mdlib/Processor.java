@@ -235,12 +235,7 @@ public class Processor {
 
                 String outPath = FileUtil.generatedOutPath(root, subFile.toPath(), site.getOut()) + ".html";
                 Path resolve = site.getOut().resolve(outPath);
-                if (Files.notExists(resolve)) {
-                    if (Files.notExists(resolve.getParent())) {
-                        Files.createDirectories(resolve.getParent());
-                    }
-                    Files.createFile(resolve);
-                }
+                FileUtil.createFile(resolve);
 
                 String renderContent = FileUtil.render(new MarkdownTemplate(site, subFile));
                 Files.write(resolve, renderContent.getBytes(StandardCharsets.UTF_8));

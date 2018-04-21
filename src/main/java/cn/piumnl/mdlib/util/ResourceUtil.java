@@ -23,14 +23,15 @@ import java.util.zip.ZipEntry;
 public class ResourceUtil {
 
     public static Properties loadProperties(String name) throws IOException {
-        InputStream stream = ResourceUtil.class.getResourceAsStream(name);
-        if (stream == null) {
-            throw new RuntimeException(StringUtil.format("Can't find properties file '{}'!", name));
-        }
+        try (InputStream stream = ResourceUtil.class.getResourceAsStream(name)) {
+            if (stream == null) {
+                throw new RuntimeException(StringUtil.format("Can't find properties file '{}'!", name));
+            }
 
-        Properties properties = new Properties();
-        properties.load(stream);
-        return properties;
+            Properties properties = new Properties();
+            properties.load(stream);
+            return properties;
+        }
     }
 
     public static void copyJarResource(Path target, Predicate<String> predicate) throws IOException {
@@ -50,16 +51,12 @@ public class ResourceUtil {
             throw new RuntimeException(e);
         }
 
-        Path resolve = target.resolve(name);
-
-        if (Files.notExists(resolve)) {
-            if (Files.notExists(resolve.getParent())) {
-                try {
-                    Files.createDirectories(resolve.getParent());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+        Path resolve;
+        try {
+            resolve = target.resolve(name);
+            FileUtil.createFile(resolve);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         try (InputStream inputStream = url.openStream();
