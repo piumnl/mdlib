@@ -2,22 +2,14 @@ package cn.piumnl.mdlib;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.LogManager;
 
-import freemarker.template.TemplateException;
-
 import cn.piumnl.mdlib.entity.MdlibProperties;
 import cn.piumnl.mdlib.entity.Site;
-import cn.piumnl.mdlib.util.FileUtil;
 import cn.piumnl.mdlib.util.RefelectUtil;
 import cn.piumnl.mdlib.util.ResourceUtil;
 
@@ -28,21 +20,7 @@ import cn.piumnl.mdlib.util.ResourceUtil;
  */
 public class Application {
 
-    static {
-        try {
-            // 如果是在 jar 中需要手动创建一个文件系统，但在非 jar 中不需要创建
-            if (FileUtil.isJar()) {
-                URI uri = Application.class.getResource("").toURI();
-                FileSystem fileSystem = FileSystems.newFileSystem(uri, new HashMap<>());;
-            }
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) throws IOException, TemplateException {
+    public static void main(String[] args) throws IOException {
         initLogger();
         processor();
     }
