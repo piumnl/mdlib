@@ -198,6 +198,8 @@ public class FileUtil {
             }
 
             Files.createFile(resolve);
+        } else {
+            RefelectUtil.LOGGER.info(StringUtil.format("file {} is exists!", resolve.toAbsolutePath()));
         }
     }
 
