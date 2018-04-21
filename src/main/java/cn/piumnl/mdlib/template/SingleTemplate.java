@@ -18,7 +18,7 @@ public class SingleTemplate extends AbstractLibraryTemplate {
     private String content;
 
     public SingleTemplate(Site site, String name, String content) {
-        super(site, name);
+        super(site, name, "single.ftl");
         this.content = content;
     }
 
@@ -27,20 +27,14 @@ public class SingleTemplate extends AbstractLibraryTemplate {
     }
     @Override
     public Map<String, Object> dataModel() {
-        Map<String, Object> listLibMap = new HashMap<>(5);
-        listLibMap.put("uri", getSite().getUri());
-        listLibMap.put("icon", getSite().getIcon());
-        listLibMap.put("title", getName());
+        Map<String, Object> listLibMap = new HashMap<>(6);
+
+        initSiteModal(listLibMap);
         listLibMap.put("siteName", getSite().getName());
         listLibMap.put("libraries", getSite().getLibraries());
         listLibMap.put("content", content);
 
         return listLibMap;
-    }
-
-    @Override
-    public String ftlPath() {
-        return "single.ftl";
     }
 
     public String getContent() {

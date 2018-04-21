@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,18 +21,9 @@ public class Site implements Serializable {
 
     private static final long serialVersionUID = -1764513206170007080L;
 
-    private static final String TRUE = "true";
     public static final String STATIC_ML_ICO = "static/ml.ico";
 
-    private List<File> staticPath;
-
-    private boolean defaultStaticPath = false;
-
-    private String name;
-
-    private String icon;
-
-    private String uri;
+    private MdlibProperties properties;
 
     private List<Library> list;
 
@@ -43,46 +33,29 @@ public class Site implements Serializable {
 
     private Path out;
 
-    public Site(Properties properties) {
-        this.name = properties.getProperty("name", "mdlib");
-        this.uri = properties.getProperty("uri", "");
-        this.out = Paths.get(properties.getProperty("out", "mdlib"));
+    private List<File> staticPath;
 
-        String property = properties.getProperty("static");
-        if (StringUtil.isEmpty(property)) {
-            this.staticPath = new ArrayList<>();
-        } else {
-            this.staticPath = Arrays.stream(property.split(","))
-                                    .map(File::new)
-                                    .collect(Collectors.toList());
-        }
+    public Site(MdlibProperties properties) {
+        this.properties = properties;
 
-        // 是否提供默认的静态资源
-        String defaultStatic = properties.getProperty("need-default-static", TRUE);
-        if (TRUE.equalsIgnoreCase(defaultStatic)) {
-            this.defaultStaticPath = true;
-        }
+        this.list = convertLibrary(properties.getList().stream(), "list");
+        this.collapsible = convertLibrary(properties.getCollapsible().stream(), "collapsible");
+        this.single = convertLibrary(properties.getSingle().stream(), "single");
 
-        // 图标设置
-        this.icon = properties.getProperty("icon");
+        this.out = Paths.get(properties.getOutPath());
 
-        String li = "list";
-        this.list = Stream.of(properties.getProperty(li, ""))
-                          .filter(StringUtil::isNotEmpty)
-                          .flatMap(s -> Arrays.stream(s.split(",")))
-                          .collect(ArrayList::new, (list, lib) -> list.add(new Library(lib, li)), List::addAll);
+        this.staticPath = getMdStaticPath(properties);
+    }
 
-        String coll = "collapsible";
-        this.collapsible = Stream.of(properties.getProperty(coll, ""))
-                                 .filter(StringUtil::isNotEmpty)
-                                 .flatMap(s -> Arrays.stream(s.split(",")))
-                                 .collect(ArrayList::new, (list, lib) -> list.add(new Library(lib, coll)), List::addAll);
+    private List<Library> convertLibrary(Stream<String> stream, String type) {
+        return stream.filter(StringUtil::isNotEmpty)
+                     .collect(ArrayList::new, (list, lib) -> list.add(new Library(lib, type)), List::addAll);
+    }
 
-        String single = "single";
-        this.single = Stream.of(properties.getProperty(single, ""))
-                            .filter(StringUtil::isNotEmpty)
-                            .flatMap(s -> Arrays.stream(s.split(",")))
-                            .collect(ArrayList::new, (list, lib) -> list.add(new Library(lib, single)), List::addAll);
+    private List<File> getMdStaticPath(MdlibProperties properties) {
+        return Arrays.stream(properties.getResourcePaths())
+                     .map(File::new)
+                     .collect(Collectors.toList());
     }
 
     public List<Library> getLibraries() {
@@ -99,11 +72,7 @@ public class Site implements Serializable {
     }
 
     public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
+        return properties.getIcon();
     }
 
     public List<Library> getList() {
@@ -115,7 +84,7 @@ public class Site implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return properties.getName();
     }
 
     public List<Library> getCollapsible() {
@@ -127,7 +96,7 @@ public class Site implements Serializable {
     }
 
     public String getUri() {
-        return uri;
+        return properties.getIndexURI();
     }
 
     public List<File> getStaticPath() {
@@ -139,7 +108,7 @@ public class Site implements Serializable {
     }
 
     public boolean isDefaultStaticPath() {
-        return defaultStaticPath;
+        return properties.isNeedDefaultResourcePath();
     }
 
     public List<Library> getSingle() {

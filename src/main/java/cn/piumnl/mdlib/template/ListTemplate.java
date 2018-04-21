@@ -17,26 +17,20 @@ public class ListTemplate extends AbstractLibraryTemplate {
     private List<Article> articles;
 
     public ListTemplate(Site site, String name, List<Article> articles) {
-        super(site, name);
+        super(site, name, "list.ftl");
         this.articles = articles;
     }
 
     @Override
     public Map<String, Object> dataModel() {
-        Map<String, Object> listLibMap = new HashMap<>(5);
-        listLibMap.put("uri", getSite().getUri());
-        listLibMap.put("icon", getSite().getIcon());
-        listLibMap.put("title", getName());
+        Map<String, Object> listLibMap = new HashMap<>(6);
+
+        initSiteModal(listLibMap);
         listLibMap.put("siteName", getSite().getName());
         listLibMap.put("libraries", getSite().getLibraries());
         listLibMap.put("articles", articles);
 
         return listLibMap;
-    }
-
-    @Override
-    public String ftlPath() {
-        return "list.ftl";
     }
 
     public List<Article> getArticles() {

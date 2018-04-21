@@ -18,7 +18,7 @@ public class MarkdownTemplate extends AbstractLibraryTemplate {
     private String content;
 
     public MarkdownTemplate(Site site, String name, String content) {
-        super(site, name);
+        super(site, name, "markdown.ftl");
         this.content = content;
     }
 
@@ -30,17 +30,10 @@ public class MarkdownTemplate extends AbstractLibraryTemplate {
     public Map<String, Object> dataModel() {
         Map<String, Object> map = new HashMap<>(4);
 
-        map.put("uri", getSite().getUri());
-        map.put("icon", getSite().getIcon());
-        map.put("title", getName());
+        initSiteModal(map);
         map.put("content", content);
 
         return map;
-    }
-
-    @Override
-    public String ftlPath() {
-        return "markdown.ftl";
     }
 
     public String getContent() {

@@ -53,13 +53,10 @@ public class Processor {
                 site.getStaticPath().add(FileUtil.classPath("static"));
             }
         } else {
-            if (StringUtil.isEmpty(site.getIcon())) {
-                site.setIcon(Site.STATIC_ML_ICO);
-                if (FileUtil.isJar()) {
-                    ResourceUtil.copyJarResource(site.getOut(), name -> StringUtil.equals(name, Site.STATIC_ML_ICO));
-                } else {
-                    site.getStaticPath().add(FileUtil.classPath(Site.STATIC_ML_ICO));
-                }
+            if (FileUtil.isJar()) {
+                ResourceUtil.copyJarResource(site.getOut(), name -> StringUtil.equals(name, Site.STATIC_ML_ICO));
+            } else {
+                site.getStaticPath().add(FileUtil.classPath(Site.STATIC_ML_ICO));
             }
         }
         // 复制静态资源
@@ -69,7 +66,7 @@ public class Processor {
             .stream()
             .flatMap(library -> library.getDir().stream())
             .distinct()
-            .forEach(p -> renderMd(Paths.get(p)));
+            .forEach(p -> renderMd(Paths.get(p).toAbsolutePath()));
 
         // -----------------------------------------------
 
@@ -86,7 +83,7 @@ public class Processor {
 
             List<String> dir = lib.getDir();
             File file;
-            if (dir.size() > 1) {
+            if (dir.size() != 1) {
                 throw new RuntimeException(
                         StringUtil.format("lib '{}' must be only one! find {}!",
                                 lib.getName(), lib.getDir().size()));

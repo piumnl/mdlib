@@ -1,5 +1,7 @@
 package cn.piumnl.mdlib.template;
 
+import java.util.Map;
+
 import cn.piumnl.mdlib.entity.Site;
 
 /**
@@ -11,11 +13,14 @@ public abstract class AbstractLibraryTemplate implements LibraryTemplate {
 
     private Site site;
 
+    private String ftlPath;
+
     private String name;
 
-    public AbstractLibraryTemplate(Site site, String name) {
+    public AbstractLibraryTemplate(Site site, String name, String ftlPath) {
         this.site = site;
         this.name = name;
+        this.ftlPath = ftlPath;
     }
 
     @Override
@@ -26,5 +31,16 @@ public abstract class AbstractLibraryTemplate implements LibraryTemplate {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String ftlPath() {
+        return ftlPath;
+    }
+
+    protected void initSiteModal(Map<String, Object> map) {
+        map.put("uri", getSite().getUri());
+        map.put("icon", getSite().getIcon());
+        map.put("title", getName());
     }
 }

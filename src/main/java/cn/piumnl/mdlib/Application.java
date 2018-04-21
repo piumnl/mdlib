@@ -15,8 +15,10 @@ import java.util.logging.LogManager;
 
 import freemarker.template.TemplateException;
 
+import cn.piumnl.mdlib.entity.MdlibProperties;
 import cn.piumnl.mdlib.entity.Site;
 import cn.piumnl.mdlib.util.FileUtil;
+import cn.piumnl.mdlib.util.RefelectUtil;
 import cn.piumnl.mdlib.util.ResourceUtil;
 
 /**
@@ -45,7 +47,7 @@ public class Application {
         processor();
     }
 
-    private static void processor() throws IOException, TemplateException {
+    private static void processor() throws IOException {
         // 读取配置文件 application.properties
         Path path = Paths.get("application.properties");
         Properties properties = ResourceUtil.loadProperties("/application.properties");
@@ -54,7 +56,7 @@ public class Application {
             properties.load(Files.newInputStream(path));
         }
 
-        Site site = new Site(properties);
+        Site site = new Site(RefelectUtil.inject(properties, MdlibProperties.class));
 
         Processor processor = new Processor(site);
         processor.processor();

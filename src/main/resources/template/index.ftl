@@ -11,7 +11,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>${title}</title>
     <link href="${uri}/static/css/icon.css" rel="stylesheet">
-    <link type="text/css" rel="stylesheet" href="${uri}static/css/materialize.min.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="${uri}/static/css/materialize.min.css" media="screen,projection" />
     <style>
         #content {
             width:80%;
@@ -51,7 +51,7 @@
             </#list>
         </ul>
     </div>
-    <script type="text/javascript" src="${uri}static/js/jquery-3.2.1.min.js"></script>
-    <script src="${uri}static/js/materialize.min.js"></script>
+    <script type="text/javascript" src="${uri}/static/js/jquery-3.2.1.min.js"></script>
+    <script src="${uri}/static/js/materialize.min.js"></script>
 </body>
 </html>
