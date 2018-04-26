@@ -17,8 +17,16 @@ import cn.piumnl.mdlib.annotation.Property;
  */
 public interface RefelectUtil {
 
-    static Logger LOGGER = Logger.getLogger("cn.piumnl.mdlib");
+    Logger LOGGER = Logger.getLogger("cn.piumnl.mdlib");
 
+    /**
+     * 通过 Properties 对象实例化一个类对象，该类中包含 {@link Property} 注解的字段将会被初始化为 Properties
+     * 对象中的一个 key 对应的值。
+     * @param properties properties 文件中的键值对
+     * @param tClass 需要实例化的类的 Class 对象
+     * @param <T> 需要实例化的类
+     * @return 实例化后的对象
+     */
     static <T> T inject(Properties properties, Class<T> tClass) {
         try {
             Field[] declaredFields = tClass.getDeclaredFields();
@@ -42,6 +50,13 @@ public interface RefelectUtil {
         }
     }
 
+    /**
+     * 为字段设置值，支持基本类型 + List<String> + Set<String> + String[]
+     * @param field 字段对象
+     * @param obj 具体字段对应的对象
+     * @param value 需要设置的值
+     * @param separator 如果是集合或数组的话对 value 进行分割的分割符
+     */
     static void setFieldValue(Field field, Object obj, String value, String separator) {
         try {
             field.setAccessible(true);
