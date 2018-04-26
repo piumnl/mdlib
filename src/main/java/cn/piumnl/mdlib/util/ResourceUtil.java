@@ -2,12 +2,15 @@ package cn.piumnl.mdlib.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -23,11 +26,7 @@ import java.util.zip.ZipEntry;
 public class ResourceUtil {
 
     public static Properties loadProperties(String name) throws IOException {
-        try (InputStream stream = ResourceUtil.class.getResourceAsStream(name)) {
-            if (stream == null) {
-                throw new RuntimeException(StringUtil.format("Can't find properties file '{}'!", name));
-            }
-
+        try (Reader stream = new InputStreamReader(ResourceUtil.class.getResourceAsStream(name), StandardCharsets.UTF_8)) {
             Properties properties = new Properties();
             properties.load(stream);
             return properties;

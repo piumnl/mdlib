@@ -2,6 +2,7 @@ package cn.piumnl.mdlib;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,7 +32,7 @@ public class Application {
         Properties properties = ResourceUtil.loadProperties("/application.properties");
         if (Files.exists(path)) {
             properties = new Properties(properties);
-            properties.load(Files.newInputStream(path));
+            properties.load(Files.newBufferedReader(path, StandardCharsets.UTF_8));
         }
 
         Site site = new Site(RefelectUtil.inject(properties, MdlibProperties.class));
