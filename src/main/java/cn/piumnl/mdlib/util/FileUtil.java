@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
 
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
@@ -36,6 +37,8 @@ import cn.piumnl.mdlib.template.LibraryTemplate;
  * @since on 2018-03-25.
  */
 public class FileUtil {
+
+    private static Logger logger = Logger.getLogger("cn.piumnl.mdlib");
 
     private static Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
 
@@ -143,6 +146,7 @@ public class FileUtil {
     }
 
     public static String readFile(File file) throws IOException {
+        logger.fine(StringUtil.format("read file '{}'!", file.getAbsolutePath()));
         List<String> allLines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
         StringBuilder builder = new StringBuilder();
         for (String line : allLines) {
