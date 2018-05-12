@@ -29,6 +29,8 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
+import org.apache.commons.io.FilenameUtils;
+
 import cn.piumnl.mdlib.template.LibraryTemplate;
 
 /**
@@ -217,5 +219,17 @@ public class FileUtil {
 
     public static File classPath(String file) {
         return new File(classPath() + File.separator + file);
+    }
+
+    public static boolean isImage(String file) {
+        String extension = FilenameUtils.getExtension(file).toLowerCase();
+
+        return extension.equals("png")
+                || extension.equals("jpg")
+                || extension.equals("jpeg")
+                || extension.equals("bmp")
+                || extension.equals("gif")
+                || extension.equals("svg")
+                || extension.equals("ico");
     }
 }
