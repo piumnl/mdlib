@@ -95,7 +95,7 @@ public class Processor {
 
             // 输出
             Path resolve = resolvePath(site, lib.getUrl());
-            LOGGER.info(resolve.toFile().getAbsolutePath());
+            LOGGER.info(resolve.toAbsolutePath().normalize().toString());
             FileUtil.createFile(resolve);
             Files.write(resolve, renderContent.getBytes(StandardCharsets.UTF_8));
 
@@ -142,7 +142,7 @@ public class Processor {
 
             // 输出
             Path resolve = resolvePath(site, lib.getUrl());
-            LOGGER.info(resolve.toFile().getAbsolutePath());
+            LOGGER.info(resolve.toAbsolutePath().normalize().toFile().getPath());
             FileUtil.createFile(resolve);
             Files.write(resolve, renderContent.getBytes(StandardCharsets.UTF_8));
 
@@ -166,7 +166,7 @@ public class Processor {
             // 输出
             Path resolve = resolvePath(site, lib.getUrl());
 
-            LOGGER.info(resolve.toFile().getAbsolutePath());
+            LOGGER.info(resolve.toAbsolutePath().normalize().toFile().getPath());
             FileUtil.createFile(resolve);
             Files.write(resolve, renderContent.getBytes(StandardCharsets.UTF_8));
 
@@ -231,7 +231,7 @@ public class Processor {
                     return;
                 }
 
-                LOGGER.info(StringUtil.format("  render md: '{}'", subFile.getAbsolutePath()));
+                LOGGER.info(StringUtil.format("  render md: '{}'", Paths.get(subFile.getAbsolutePath()).normalize()));
 
                 String outPath = FileUtil.generatedOutPath(root, subFile.toPath(), site.getOut()) + ".html";
                 Path resolve = site.getOut().resolve(outPath);
@@ -241,7 +241,7 @@ public class Processor {
                 Files.write(resolve, renderContent.getBytes(StandardCharsets.UTF_8));
 
                 allFile.add(outPath);
-                LOGGER.info(StringUtil.format("    generated: '{}'", outPath));
+                LOGGER.info(StringUtil.format("          => '{}'", Paths.get(outPath).normalize()));
             }
         }
     }
