@@ -15,6 +15,10 @@ JDK8 + Maven
 1. 运行 `java -jar mdlib-1.0-SNAPSHOT.jar`
 1. 将目录拖放到 Tomcat 或类似的应用服务器上，也可以直接丢 码云 或 Github 的Pages 服务上。
 
+### 静态服务器提供
+
+运行命令 `java -jar mdlib-1.0-SNAPSHOT.jar run` 即可，端口为
+
 ## application.properties 文件配置
 
 key | type | 默认值 | 说明

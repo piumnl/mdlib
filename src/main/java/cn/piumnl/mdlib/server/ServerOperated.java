@@ -94,12 +94,6 @@ public class ServerOperated {
             // 根据 HTTP 协议, 空行将结束头信息
             out.println();
 
-            // byte[] data = new byte[1024];
-            // int length;
-            // while ((length = fis.read(data)) != -1) {
-            //     out.write(data, 0, length);
-            // }
-
             String line;
             while ((line = breader.readLine()) != null) {
                 out.println(line);
@@ -124,46 +118,6 @@ public class ServerOperated {
             while ((length = fis.read(data)) != -1) {
                 out.write(data, 0, length);
             }
-
-            // byte data[] = new byte[fis.available()];
-            //
-            // fis.read(data);
-            // out.write(data);
-            fis.close();
         }
     }
-
-    // public void readFile(File file, Socket client, String contentType) {
-    //     PrintWriter out = null;
-    //     boolean print = false;
-    //     try {
-    //         if (file.getName().endsWith("html")) {
-    //             print = true;
-    //         }
-    //         out = new PrintWriter(new OutputStreamWriter(client.getOutputStream(), "UTF-8"), true);
-    //         InputStreamReader in = new InputStreamReader(new FileInputStream(file), "UTF-8");
-    //         BufferedReader breader = new BufferedReader(in);
-    //         String s = null;
-    //         StringBuffer sbu = new StringBuffer();
-    //         out.println("HTTP/1.0 200 OK");// 返回应答消息,并结束应答
-    //         out.println("Content-Type:" + contentType + ";charset=UTF-8");
-    //         out.println();// 根据 HTTP 协议, 空行将结束头信息
-    //         while ((s = breader.readLine()) != null) {
-    //             if (print) {
-    //                 System.out.println(s);
-    //             }
-    //             out.println(s);
-    //         }
-    //
-    //     } catch (Exception e) {
-    //         out.println("HTTP/1.0 500");// 返回应答消息,并结束应答
-    //         out.println("");
-    //         out.flush();
-    //     } finally {
-    //         out.close();
-    //         closeSocket(client);
-    //     }
-    // }
-
-
 }

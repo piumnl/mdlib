@@ -41,18 +41,11 @@ public class Application {
             // 标准HTTP端口
             int port = 20012;
             ServerSocket server = new ServerSocket(port);
-            logger.info("静态资源服务器正在运行，端口为 " + port);
-
-            // 等待客户端的连接请求
-            // 获取请求的资源路径
-            // 读取文件返回
+            logger.info(StringUtil.format("静态资源服务器正在运行，端口为 {0}， 完整地址： http://localhost:{0}/", port));
 
             Socket client;
             while (true) {
                 client = server.accept();
-                // ServerContext serverContext = ;
-                // serverContext.getResponse().done();
-                // Handler handler = new Handler(client, processor.getOut().toAbsolutePath().toString());
                 new Thread(new ServerContext(client)).start();
             }
         }
