@@ -73,45 +73,20 @@
                 </configuration>
             </plugin>
 
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<version>2.6</version>-->
-                <!--<configuration>-->
-                    <!--<archive>-->
-                        <!--<manifest>-->
-                            <!--<addClasspath>true</addClasspath>-->
-                            <!--<classpathPrefix>lib/</classpathPrefix>-->
-                            <!--<mainClass>cn.piumnl.mdlib.Application</mainClass>-->
-                        <!--</manifest>-->
-                    <!--</archive>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-            <!-- 不把依赖 jar 放入总 jar 中的写法 -->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-dependency-plugin</artifactId>-->
-                <!--<version>2.10</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>copy-dependencies</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-dependencies</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<outputDirectory>${project.build.directory}/lib</outputDirectory>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.1.0</version>
                 <configuration>
+                    <!-- 应用名（最后压缩包的名字） -->
+                    <finalName>${project.name}</finalName>
                     <!-- 是否添加 AssemblyId 后缀 -->
-                    <appendAssemblyId>true</appendAssemblyId>
+                    <!--<appendAssemblyId>false</appendAssemblyId>-->
+                    <!-- 手动设置打包的描述文件 -->
+                    <!--<descriptors>-->
+                        <!-- 描述文件路径 -->
+                        <!--<descriptor>src/main/resources/assembly.xml</descriptor>-->
+                    <!--</descriptors>-->
                     <archive>
                         <manifest>
                             <mainClass>cn.piumnl.mdlib.Application</mainClass>
@@ -119,13 +94,14 @@
                     </archive>
                     <!--配置描述-->
                     <descriptorRefs>
+                        <!-- 官方提供的一种打包方式 fat jar，网上有人说不推荐使用 -->
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                 </configuration>
                 <executions>
                     <!-- 配置执行器 -->
                     <execution>
-                        <id>make-assembly</id>
+                        <id>${project.name}</id>
                         <!-- 绑定到package生命周期阶段上 -->
                         <phase>package</phase>
                         <goals>
