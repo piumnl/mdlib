@@ -17,7 +17,7 @@ JDK8 + Maven
 
 ### 静态服务器提供
 
-运行命令 `java -jar mdlib-1.0-SNAPSHOT.jar run` 即可，端口为
+运行命令 `java -jar mdlib-1.0-SNAPSHOT.jar run` 即可，端口为 20012
 
 ## application.properties 文件配置
 
