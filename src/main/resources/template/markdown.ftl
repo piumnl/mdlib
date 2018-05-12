@@ -17,10 +17,15 @@
             width:80%;
             margin: auto;
         }
+
+        .content {
+            margin-left: 5% !important;
+            width: 65%;
+        }
     </style>
 </head>
 <body>
-<div class="mth-layout mth-shadow mth-card">
+<div class="mth-layout mth-shadow mth-card content">
     ${content}
 </div>
 </body>
