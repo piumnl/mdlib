@@ -31,7 +31,7 @@ public class Site implements Serializable {
 
     private List<Library> single;
 
-    private Path out;
+    private transient Path out;
 
     private List<File> staticPath;
 
@@ -59,15 +59,16 @@ public class Site implements Serializable {
     }
 
     public List<Library> getLibraries() {
-        List<Library> list = getList();
-        List<Library> collapsible = getCollapsible();
-        List<Library> single = getSingle();
+        List<Library> listLib = getList();
+        List<Library> collapsibleLib = getCollapsible();
+        List<Library> singleLib = getSingle();
 
-        List<Library> libraries = new ArrayList<>(list.size() + collapsible.size());
+        int initialCapacity = listLib.size() + collapsibleLib.size() + singleLib.size();
+        List<Library> libraries = new ArrayList<>(initialCapacity);
 
-        libraries.addAll(list);
-        libraries.addAll(collapsible);
-        libraries.addAll(single);
+        libraries.addAll(listLib);
+        libraries.addAll(collapsibleLib);
+        libraries.addAll(singleLib);
         return libraries;
     }
 

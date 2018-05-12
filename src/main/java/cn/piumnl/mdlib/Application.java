@@ -74,7 +74,7 @@ public class Application {
         try {
             LogManager.getLogManager().readConfiguration(stream);
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(Application.class.getName()).severe(e.getMessage());
         }
     }
 }

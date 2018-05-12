@@ -25,6 +25,9 @@ import java.util.zip.ZipEntry;
  */
 public class ResourceUtil {
 
+    private ResourceUtil() {
+    }
+
     public static Properties loadProperties(String name) throws IOException {
         try (Reader stream = new InputStreamReader(ResourceUtil.class.getResourceAsStream(name), StandardCharsets.UTF_8)) {
             Properties properties = new Properties();

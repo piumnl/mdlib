@@ -38,11 +38,11 @@ public interface StringUtil {
      * @return 如果对象信息存在，则调用toString() 并将结果用中括号包裹，否则返回空字符串
      */
     static String block(Object msg) {
-        if (msg == null) {
-            msg = "";
+        if (msg != null) {
+            return  "[" + msg.toString() + "]";
+        } else {
+            return "[]";
         }
-
-        return "[" + msg.toString() + "]";
     }
 
     /**

@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
@@ -50,6 +51,9 @@ public class FileUtil {
         cfg.setOutputEncoding("UTF-8");
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+    }
+
+    private FileUtil() {
     }
 
     public static boolean isJar() {
@@ -125,8 +129,6 @@ public class FileUtil {
     }
 
     public static String renderContent(String content) {
-        content = content.replaceAll("\r\n", "\n");
-
         // markdown to image
         MutableDataSet options = new MutableDataSet();
         options.setFrom(ParserEmulationProfile.MARKDOWN);
@@ -134,7 +136,7 @@ public class FileUtil {
         Parser parser = Parser.builder(options).build();
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
 
-        Node document = parser.parse(content);
+        Node document = parser.parse(content.replaceAll("\r\n", "\n"));
         return renderer.render(document);
     }
 
@@ -143,7 +145,7 @@ public class FileUtil {
         Path fileOutpath = outPath.resolve(relativize);
 
         String absolutePath = fileOutpath.toFile().getAbsolutePath();
-        int i = absolutePath.lastIndexOf(".");
+        int i = absolutePath.lastIndexOf('.');
         return absolutePath.substring(0, i);
     }
 
@@ -224,12 +226,8 @@ public class FileUtil {
     public static boolean isImage(String file) {
         String extension = FilenameUtils.getExtension(file).toLowerCase();
 
-        return extension.equals("png")
-                || extension.equals("jpg")
-                || extension.equals("jpeg")
-                || extension.equals("bmp")
-                || extension.equals("gif")
-                || extension.equals("svg")
-                || extension.equals("ico");
+
+        return Stream.of("png", "jpg", "jpeg", "bmp", "gif", "svg", "gif", "ico")
+                     .anyMatch(s -> s.equals(extension));
     }
 }
