@@ -12,12 +12,15 @@ JDK8 + Maven
 
 1. 打包 `mvn clean package`
 1. 在生成的 jar 目录下创建一个 `application.properties` 文件，加上自己的配置
-1. 运行 `java -jar mdlib-1.0-SNAPSHOT.jar`
+1. 运行 `java -jar mdlib-jar-with-dependencies.jar`
 1. 将目录拖放到 Tomcat 或类似的应用服务器上，也可以直接丢 码云 或 Github 的Pages 服务上。
 
-### 静态服务器提供
+### 参数说明
 
-运行命令 `java -jar mdlib-1.0-SNAPSHOT.jar run` 即可，端口为 20012
+`java -jar mdlib-jar-with-dependencies.jar [command args]`
+
+- `-run/-r`: 是否运行静态服务器，以方便预览
+- `-port/-p`: 设置静态服务器的端口，默认为 20000
 
 ## application.properties 文件配置
 

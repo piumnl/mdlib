@@ -12,6 +12,13 @@ import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import cn.piumnl.mdlib.entity.MdlibProperties;
 import cn.piumnl.mdlib.entity.Site;
 import cn.piumnl.mdlib.server.ServerContext;
@@ -36,18 +43,63 @@ public class Application {
         Site processor = processor();
         outPath = processor.getOut().toAbsolutePath().toString();
 
-        if (args.length > 0 && StringUtil.equals(args[0], "run")) {
-            Logger logger = Logger.getLogger(ServerContext.class.getName());
-            // 标准HTTP端口
-            int port = 20012;
-            ServerSocket server = new ServerSocket(port);
-            logger.info(StringUtil.format("静态资源服务器正在运行，端口为 {0}， 完整地址： http://localhost:{0}/", port));
+        parseArgs(args);
+    }
 
-            Socket client;
-            while (true) {
-                client = server.accept();
-                new Thread(new ServerContext(client)).start();
+    private static void parseArgs(String[] args) throws IOException {
+        Options options = new Options();
+
+        //短选项，长选项，选项后是否有参数，描述
+        Option runOpt = new Option("r", "run", false, "是否运行静态服务器");
+        Option flushOpt = new Option("f", "flush", false, "是否实时刷新 md 文件");
+        Option portOpt = new Option("p", "port", true, "静态服务器所占端口");
+
+        // 是否必须
+        runOpt.setRequired(false);
+        flushOpt.setRequired(false);
+        portOpt.setRequired(false);
+
+        options.addOption(runOpt);
+        options.addOption(flushOpt);
+        options.addOption(portOpt);
+
+        try {
+            // Posix 风格
+            CommandLineParser parser = new DefaultParser();
+            CommandLine commandLine = parser.parse(options, args);
+
+            // 标准HTTP端口
+            int port = 20000;
+
+            if (commandLine.hasOption(portOpt.getOpt())) {
+                port = Integer.parseInt(commandLine.getOptionValue(portOpt.getOpt()));
             }
+
+            if (commandLine.hasOption(flushOpt.getOpt())) {
+                // Executors.newCachedThreadPool()
+                // BasicThreadFactory build =
+                //         new BasicThreadFactory.Builder()
+                //                 .namingPattern("flush-md-%d")
+                //                 .daemon(true)
+                //                 .build();
+                // ScheduledThreadPoolExecutor service = new ScheduledThreadPoolExecutor(1, build);
+                // service.
+            }
+
+            if (commandLine.hasOption(runOpt.getOpt())) {
+                Logger logger = Logger.getLogger(ServerContext.class.getName());
+                ServerSocket server = new ServerSocket(port);
+                logger.info(StringUtil.format("静态资源服务器正在运行，端口为 {0}， 完整地址： http://localhost:{0}/", port));
+
+                Socket client;
+                while (true) {
+                    client = server.accept();
+                    new Thread(new ServerContext(client)).start();
+                }
+            }
+
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
     }
 
