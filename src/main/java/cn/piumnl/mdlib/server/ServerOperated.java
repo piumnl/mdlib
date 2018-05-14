@@ -9,10 +9,12 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.file.Path;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import cn.piumnl.mdlib.util.FileUtil;
 import cn.piumnl.mdlib.util.IOUtil;
 import cn.piumnl.mdlib.util.StringUtil;
 
@@ -75,11 +77,12 @@ public class ServerOperated {
         String contentType = request.getMime();
         File file = path.toFile();
 
-        if (FileUtil.isImage(path.toString())){
-            opReadImage(file, contentType);
-        } else{
-            opReadTextFile(file, contentType);
-        }
+        opReadBinaryFile(file, contentType);
+        // if (FileUtil.isBinary(path.toString())){
+        //
+        // } else{
+        //     opReadTextFile(file, contentType);
+        // }
     }
 
     private void opReadTextFile(File file, String contentType) throws IOException {
@@ -87,31 +90,35 @@ public class ServerOperated {
              BufferedReader breader = new BufferedReader(IOUtil.wrapperIn(new FileInputStream(file)))) {
 
             // 返回应答消息,并结束应答
-            out.println("HTTP/1.0 200 OK");
-            out.println("Content-Type:" + contentType + ";charset=UTF-8");
-            out.println("Content-Length: " + file.length());
+            out.print("HTTP/1.0 200 OK\r\n");
+            out.print(StringUtil.format("Content-Type: {}\r\n", contentType));
+            out.print(StringUtil.format("Content-Length: {}\r\n", file.length()));
+            out.print(StringUtil.format("Date: {}\r\n", DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now(ZoneOffset.UTC))));
+            out.print("Server: Mdlib Static HTTP server\r\n");
 
             // 根据 HTTP 协议, 空行将结束头信息
-            out.println();
+            out.print("\r\n");
 
             String line;
-            while ((line = breader.readLine()) != null) {
+             while ((line = breader.readLine()) != null) {
                 out.println(line);
             }
 
         }
     }
 
-    private void opReadImage(File file, String contentType) throws IOException {
+    private void opReadBinaryFile(File file, String contentType) throws IOException {
         try (PrintStream out = new PrintStream(client, true);
              FileInputStream fis = new FileInputStream(file)) {
 
             // 返回应答消息,并结束应答
-            out.println("HTTP/1.0 200 OK");
-            out.println("Content-Type:" + contentType + ";charset=UTF-8");
-            out.println("Content-Length: " + file.length());
+            out.print("HTTP/1.0 200 OK\r\n");
+            out.print(StringUtil.format("Content-Type: {}\r\n", contentType));
+            out.print(StringUtil.format("Content-Length: {}\r\n", file.length()));
+            out.print(StringUtil.format("Date: {}\r\n", DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now(ZoneOffset.UTC))));
+            out.print("Server: Mdlib Static HTTP server\r\n");
             // 根据 HTTP 协议, 空行将结束头信息
-            out.println();
+            out.print("\r\n");
 
             byte[] data = new byte[1024];
             int length;
