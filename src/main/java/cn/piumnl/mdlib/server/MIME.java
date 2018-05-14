@@ -32,6 +32,9 @@ public class MIME {
         mime.put("wma", "audio/x-ms-wma");
         mime.put("wmv", "video/x-ms-wmv");
         mime.put("xml", "text/xml");
+        mime.put("woff2", "font/woff2");
+        mime.put("woff", "font/woff");
+        mime.put("ttf", "application/x-font-ttf");
     }
 
     public static String get(String type) {
