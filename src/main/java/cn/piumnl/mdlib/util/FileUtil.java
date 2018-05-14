@@ -223,11 +223,11 @@ public class FileUtil {
         return new File(classPath() + File.separator + file);
     }
 
-    public static boolean isImage(String file) {
+    public static boolean isBinary(String file) {
         String extension = FilenameUtils.getExtension(file).toLowerCase();
 
 
-        return Stream.of("png", "jpg", "jpeg", "bmp", "gif", "svg", "gif", "ico")
+        return Stream.of("png", "jpg", "jpeg", "bmp", "gif", "svg", "gif", "ico", "woff", "woff2")
                      .anyMatch(s -> s.equals(extension));
     }
 }
