@@ -23,17 +23,28 @@
         .mdlib-title a {
             color: #424242;
         }
+        .mdlib-title {
+            margin-left: 1rem;
+        }
+        body > *:first-child {
+            margin-top: auto;
+        }
+        li {
+            margin-top: auto;
+        }
     </style>
 </head>
 <body>
     <nav>
         <div class="nav-wrapper">
-            <a href="#" class="brand-logo">${siteName}</a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-                    <#list libraries as path>
-                        <li><a href="${path.url}">${path.name}</a></li>
-                    </#list>
-            </ul>
+            <div class="mdlib-title">
+                <a href="#" class="brand-logo">${siteName}</a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <#list libraries as path>
+                            <li><a href="${path.url}">${path.name}</a></li>
+                        </#list>
+                </ul>
+            </div>
         </div>
     </nav>
 
