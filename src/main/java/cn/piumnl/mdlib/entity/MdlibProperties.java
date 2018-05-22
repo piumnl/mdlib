@@ -14,32 +14,65 @@ import cn.piumnl.mdlib.annotation.Property;
  */
 public class MdlibProperties {
 
+    /**
+     * 站点名称
+     */
     @Property(value = "lib.name", defaultValue = "mdlib")
     private String name;
 
+    /**
+     * 站点图标
+     */
     @Property(value = "lib.icon", defaultValue = "static/ml.ico")
     private String icon;
 
+    /**
+     * 站点地址前缀
+     */
     @Property(value = "lib.uri")
     private String indexURI;
 
+    /**
+     * 资源目录
+     */
     @Property(value = "lib.resource-path")
     private String[] resourcePaths;
 
+    /**
+     * 是否加载默认提供的资源
+     */
     @Property(value = "lib.resource-default", defaultValue = "true")
     private boolean needDefaultResourcePath;
 
+    /**
+     * 列表类型的文章排列
+     */
     @Property(value = "lib.mixed")
     private List<String> list;
 
+    /**
+     * 可折叠类型的文章排列
+     */
     @Property(value = "lib.module")
     private List<String> collapsible;
 
+    /**
+     * 单文章页
+     */
     @Property(value = "lib.single")
     private List<String> single;
 
-    @Property(value = "lib.out",defaultValue = "mdlib")
+    /**
+     * 输出目录
+     */
+    @Property(value = "lib.out", defaultValue = "mdlib")
     private String outPath;
+
+    /**
+     * 代码所在目录
+     */
+    @Property(value = "lib.code", defaultValue = "code")
+    private String code;
 
     public MdlibProperties() {
     }
@@ -80,6 +113,10 @@ public class MdlibProperties {
         return single;
     }
 
+    public String getCode() {
+        return code;
+    }
+
     @Override
     public String toString() {
         return "MdlibProperties{" +
@@ -92,6 +129,7 @@ public class MdlibProperties {
                 ", collapsible=" + collapsible +
                 ", single=" + single +
                 ", outPath='" + outPath + '\'' +
+                ", code='" + code + '\'' +
                 '}';
     }
 }
