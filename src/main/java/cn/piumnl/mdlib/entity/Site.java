@@ -35,12 +35,15 @@ public class Site implements Serializable {
 
     private List<File> staticPath;
 
+    private String codePath;
+
     public Site(MdlibProperties properties) {
         this.properties = properties;
 
         this.list = convertLibrary(properties.getList().stream(), "list");
         this.collapsible = convertLibrary(properties.getCollapsible().stream(), "collapsible");
         this.single = convertLibrary(properties.getSingle().stream(), "single");
+        this.codePath = properties.getCode();
 
         this.out = Paths.get(properties.getOutPath());
 
@@ -114,5 +117,9 @@ public class Site implements Serializable {
 
     public List<Library> getSingle() {
         return single;
+    }
+
+    public String getCodePath() {
+        return codePath;
     }
 }
