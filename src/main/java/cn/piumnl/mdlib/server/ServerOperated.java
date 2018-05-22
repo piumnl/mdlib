@@ -1,6 +1,5 @@
 package cn.piumnl.mdlib.server;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -78,33 +77,6 @@ public class ServerOperated {
         File file = path.toFile();
 
         opReadBinaryFile(file, contentType);
-        // if (FileUtil.isBinary(path.toString())){
-        //
-        // } else{
-        //     opReadTextFile(file, contentType);
-        // }
-    }
-
-    private void opReadTextFile(File file, String contentType) throws IOException {
-        try (PrintWriter out = new PrintWriter(IOUtil.wrapperOut(client), true);
-             BufferedReader breader = new BufferedReader(IOUtil.wrapperIn(new FileInputStream(file)))) {
-
-            // 返回应答消息,并结束应答
-            out.print("HTTP/1.0 200 OK\r\n");
-            out.print(StringUtil.format("Content-Type: {}\r\n", contentType));
-            out.print(StringUtil.format("Content-Length: {}\r\n", file.length()));
-            out.print(StringUtil.format("Date: {}\r\n", DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now(ZoneOffset.UTC))));
-            out.print("Server: Mdlib Static HTTP server\r\n");
-
-            // 根据 HTTP 协议, 空行将结束头信息
-            out.print("\r\n");
-
-            String line;
-             while ((line = breader.readLine()) != null) {
-                out.println(line);
-            }
-
-        }
     }
 
     private void opReadBinaryFile(File file, String contentType) throws IOException {
