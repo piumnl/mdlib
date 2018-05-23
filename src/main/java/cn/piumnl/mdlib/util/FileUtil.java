@@ -124,10 +124,21 @@ public class FileUtil {
         return out.toString();
     }
 
+    /**
+     * 渲染模板
+     * @param template 渲染页面所需要的内容
+     * @return 渲染后的页面内容
+     * @throws IOException
+     */
     public static String render(LibraryTemplate template) throws IOException {
         return render(template.dataModel(), template.ftlPath());
     }
 
+    /**
+     * 渲染 md 文档
+     * @param content md 文档内容
+     * @return 渲染后的内容
+     */
     public static String renderContent(String content) {
         // markdown to image
         MutableDataSet options = new MutableDataSet();
