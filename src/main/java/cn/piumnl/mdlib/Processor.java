@@ -14,10 +14,14 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
+
 import cn.piumnl.mdlib.entity.ArchiveIndex;
 import cn.piumnl.mdlib.entity.Article;
+import cn.piumnl.mdlib.entity.CodeTree;
 import cn.piumnl.mdlib.entity.Library;
 import cn.piumnl.mdlib.entity.Site;
+import cn.piumnl.mdlib.template.CodeTemplate;
 import cn.piumnl.mdlib.template.CollapsibleTemplate;
 import cn.piumnl.mdlib.template.ListTemplate;
 import cn.piumnl.mdlib.template.MarkdownTemplate;
@@ -34,6 +38,7 @@ import cn.piumnl.mdlib.util.StringUtil;
 public class Processor {
 
     private static final Logger LOGGER = Logger.getLogger(Processor.class.getName());
+    private static final String CODE_FILE_NAME = "code.html";
 
     private Site site;
 
@@ -59,8 +64,18 @@ public class Processor {
                 site.getStaticPath().add(FileUtil.classPath(Site.STATIC_ML_ICO));
             }
         }
+
         // 复制静态资源
-        copyComplexPath(site.getStaticPath(), site.getOut());
+        List<File> staticPath = site.getStaticPath();
+
+        // code 处理
+        String codeTreeJSON = generatedCode(site.getCodePath());
+        if (codeTreeJSON == null) {
+            return;
+        }
+        LOGGER.info(codeTreeJSON);
+        staticPath.add(new File(site.getCodePath()));
+        copyComplexPath(staticPath, site.getOut());
         // 渲染 md
         site.getLibraries()
             .stream()
@@ -76,6 +91,57 @@ public class Processor {
         renderCollapsible();
         // Single 配置
         renderSingle();
+
+        // -----------------------------------------------
+
+        Path codeHtml = site.getOut().resolve(CODE_FILE_NAME);
+        if (Files.exists(codeHtml)) {
+            Files.delete(codeHtml);
+            LOGGER.warning(StringUtil.format("在 {} 目录下存在 {} 文件，正在删除中！", site.getOut(), CODE_FILE_NAME));
+        }
+        Files.createFile(codeHtml);
+        String codeHtmlContent = FileUtil.render(new CodeTemplate(site, "code", codeTreeJSON));
+        Files.write(codeHtml, codeHtmlContent.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private String generatedCode(String codePath) {
+        Path codeDir = Paths.get(codePath);
+        if (Files.notExists(codeDir)) {
+            LOGGER.warning(StringUtil.format("lib.code '{}' 目录不存在！", codePath));
+            return null;
+        }
+
+        if (!Files.isDirectory(codeDir)) {
+            LOGGER.warning(StringUtil.format("lib.code '{}' 必须为目录，不允许为其他类型的文件！", codePath));
+            return null;
+        }
+
+        CodeTree root = new CodeTree("root");
+        tree(root, codeDir.toFile());
+
+        return JSON.toJSONString(root);
+    }
+
+    private void tree(CodeTree parent, File dir) {
+        if (dir == null) {
+            return;
+        }
+
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (parent.getChildren() == null) {
+                    parent.setChildren(new ArrayList<>());
+                }
+
+                CodeTree tree = new CodeTree(file.getName(), parent);
+                parent.getChildren().add(tree);
+
+                if (file.isDirectory()) {
+                    tree(tree, file);
+                }
+            }
+        }
     }
 
     private void renderSingle() throws IOException {
