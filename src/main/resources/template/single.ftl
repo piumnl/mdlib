@@ -32,6 +32,10 @@
         li {
             margin-top: auto;
         }
+        .mdlib-md-body {
+            position: relative;
+            top: 1rem;
+        }
     </style>
 </head>
 <body>
