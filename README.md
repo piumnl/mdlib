@@ -36,3 +36,5 @@ lib.module | String |  | 两层树型格式的索引页面，格式 name:path,na
 lib.single | String |  | 单独展示的页面，格式 name:mdPath, 多用于类似 __关于我__ 这种场景
 lib.out | String |  | 输出目录
 lib.code | String |  | 要识别的代码目录
+
+代码库地址： /code
