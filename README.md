@@ -38,3 +38,5 @@ lib.out | String |  | 输出目录
 lib.code | String |  | 要识别的代码目录
 
 代码库地址： /code
+
+不能在该目录下存放二进制文件，否则可能读取文件失败（比如 pdf、doc(x)、xmind等）

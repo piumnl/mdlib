@@ -97,9 +97,12 @@ public class Processor {
         File file = new File(site.getCodePath());
         FileUtil.copyFolder(file, site.getOut().resolve(file.getName()), (source, target) -> {
             List<String> strings = Files.readAllLines(source.toPath(), StandardCharsets.UTF_8);
-            String render = FileUtil.render(new FragmentTemplate(site, source.getName(), strings.stream().reduce((s, s2) -> s + s2).orElse("")));
-            // todo for piumnl: 需要修改后缀为 html
-            Files.write(target.toPath(), render.getBytes(StandardCharsets.UTF_8));
+            String render = FileUtil.render(new FragmentTemplate(site, source.getName(), strings.stream().map(s -> s + "\n").reduce((s, s2) -> s + s2).orElse("")));
+            String name = target.getName();
+            name = name.substring(0, name.indexOf("."));
+            Path resolve = target.toPath().getParent().resolve(name + ".html");
+            Files.write(resolve, render.getBytes(StandardCharsets.UTF_8));
+            LOGGER.info(StringUtil.format("copy {} to {}", source, resolve));
         });
 
         Path codeHtml = site.getOut().resolve(CODE_FILE_NAME);

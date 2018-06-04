@@ -104,7 +104,7 @@ public class FileUtil {
 
                 consumer.accept(path, target.toFile());
             } else {
-                copyFolder(path, target);
+                copyFolder(path, target, consumer);
             }
         }
     }

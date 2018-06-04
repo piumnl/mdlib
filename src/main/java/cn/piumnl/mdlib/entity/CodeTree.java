@@ -12,6 +12,8 @@ import cn.piumnl.mdlib.util.StringUtil;
  */
 public class CodeTree {
 
+    private static final String ROOT_CODE = "/code";
+
     private String id;
 
     private String name;
@@ -29,7 +31,7 @@ public class CodeTree {
 
     public CodeTree(String name, CodeTree parent) {
         this(name);
-        this.url = StringUtil.get(parent.getUrl()) + "/" + name;
+        this.url = StringUtil.of(parent.getUrl(), ROOT_CODE) + "/" + name;
         this.parent = parent.getId();
     }
 

@@ -21,9 +21,10 @@
     <link rel="stylesheet" href="${uri}/static/css/highlight/dracula.css">
 </head>
 <body>
-<pre><code class="${language}">${content}</code></pre>
+<pre><code class="${language}">${content?html}</code></pre>
 <script type="text/javascript" src="${uri}/static/js/jquery-3.2.1.min.js"></script>
 <script src="${uri}/static/js/languages/${extName}.js"></script>
+<script src="${uri}/static/js/highlight.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>
