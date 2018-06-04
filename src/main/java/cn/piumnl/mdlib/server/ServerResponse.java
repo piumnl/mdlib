@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author piumnl
@@ -24,6 +25,12 @@ public class ServerResponse {
 
     public void done() throws IOException {
         Path realPath = context.getRequest().getRealPath();
+        if (Files.isDirectory(realPath) || Files.notExists(realPath)) {
+            if (!realPath.toFile().getName().contains(".")) {
+                realPath = Paths.get(realPath.toAbsolutePath().toFile() + ".html");
+            }
+        }
+
         if (Files.exists(realPath)) {
             operated.opReadFile(realPath, context.getRequest());
         } else if (Files.notExists(realPath)) {
