@@ -76,6 +76,11 @@ public class FileUtil {
     }
 
     public static void copyFolder(File sourcePath, Path targetPath) throws IOException {
+        copyFolder(sourcePath, targetPath, com.google.common.io.Files::copy);
+    }
+
+    public static void copyFolder(File sourcePath, Path targetPath, FileFuncational<File> consumer)
+            throws IOException {
         //源目录不存在
         if (!sourcePath.exists()) {
             throw new FileNotFoundException(StringUtil.format("source path '{}' not found",
@@ -97,7 +102,7 @@ public class FileUtil {
                     Files.delete(target);
                 }
 
-                com.google.common.io.Files.copy(path, target.toFile());
+                consumer.accept(path, target.toFile());
             } else {
                 copyFolder(path, target);
             }

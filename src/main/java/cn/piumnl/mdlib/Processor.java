@@ -23,6 +23,7 @@ import cn.piumnl.mdlib.entity.Library;
 import cn.piumnl.mdlib.entity.Site;
 import cn.piumnl.mdlib.template.CodeTemplate;
 import cn.piumnl.mdlib.template.CollapsibleTemplate;
+import cn.piumnl.mdlib.template.FragmentTemplate;
 import cn.piumnl.mdlib.template.ListTemplate;
 import cn.piumnl.mdlib.template.MarkdownTemplate;
 import cn.piumnl.mdlib.template.SingleTemplate;
@@ -68,13 +69,6 @@ public class Processor {
         // 复制静态资源
         List<File> staticPath = site.getStaticPath();
 
-        // code 处理
-        String codeTreeJSON = generatedCode(site.getCodePath());
-        if (codeTreeJSON == null) {
-            return;
-        }
-        LOGGER.info(codeTreeJSON);
-        staticPath.add(new File(site.getCodePath()));
         copyComplexPath(staticPath, site.getOut());
         // 渲染 md
         site.getLibraries()
@@ -93,6 +87,20 @@ public class Processor {
         renderSingle();
 
         // -----------------------------------------------
+
+        // code 处理
+        String codeTreeJSON = generatedCode(site.getCodePath());
+        if (codeTreeJSON == null) {
+            return;
+        }
+        LOGGER.info(codeTreeJSON);
+        File file = new File(site.getCodePath());
+        FileUtil.copyFolder(file, site.getOut().resolve(file.getName()), (source, target) -> {
+            List<String> strings = Files.readAllLines(source.toPath(), StandardCharsets.UTF_8);
+            String render = FileUtil.render(new FragmentTemplate(site, source.getName(), strings.stream().reduce((s, s2) -> s + s2).orElse("")));
+            // todo for piumnl: 需要修改后缀为 html
+            Files.write(target.toPath(), render.getBytes(StandardCharsets.UTF_8));
+        });
 
         Path codeHtml = site.getOut().resolve(CODE_FILE_NAME);
         if (Files.exists(codeHtml)) {
