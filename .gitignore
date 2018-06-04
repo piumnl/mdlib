@@ -21,3 +21,4 @@ tmp/
 build/
 dist/
 /mdlib
+/.mdlib
