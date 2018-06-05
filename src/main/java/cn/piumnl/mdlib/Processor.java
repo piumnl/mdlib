@@ -127,8 +127,9 @@ public class Processor {
             return null;
         }
 
-        CodeTree root = new CodeTree("root");
-        tree(root, codeDir.toFile());
+        File dir = codeDir.toFile();
+        CodeTree root = new CodeTree(dir.getName());
+        tree(root, dir);
 
         return JSON.toJSONString(root);
     }
