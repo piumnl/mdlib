@@ -39,7 +39,8 @@ import cn.piumnl.mdlib.util.StringUtil;
 public class Processor {
 
     private static final Logger LOGGER = Logger.getLogger(Processor.class.getName());
-    private static final String CODE_FILE_NAME = "code.html";
+
+    private static final String CODE_FILE_NAME = "代码库.html";
 
     private Site site;
 
@@ -100,7 +101,7 @@ public class Processor {
             String render = FileUtil.render(new FragmentTemplate(site, source.getName(), strings.stream().map(s -> s + "\n").reduce((s, s2) -> s + s2).orElse("")));
             String name = target.getName();
             name = name.substring(0, name.indexOf("."));
-            Path resolve = target.toPath().getParent().resolve(name + ".html");
+            Path resolve = target.toPath().getParent().resolve(name + ".html").toAbsolutePath().normalize();
             Files.write(resolve, render.getBytes(StandardCharsets.UTF_8));
             LOGGER.info(StringUtil.format("copy {} to {}", source, resolve));
         });
