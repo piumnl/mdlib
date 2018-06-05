@@ -14,8 +14,8 @@ public class CodeTemplate extends AbstractLibraryTemplate {
 
     private String tree;
 
-    public CodeTemplate(Site site, String name, String tree) {
-        super(site, name, "code.ftl");
+    public CodeTemplate(Site site, String tree) {
+        super(site, "代码库", "code.ftl");
         this.tree = tree;
     }
 

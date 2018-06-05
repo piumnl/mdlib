@@ -111,7 +111,7 @@ public class Processor {
             LOGGER.warning(StringUtil.format("在 {} 目录下存在 {} 文件，正在删除中！", site.getOut(), CODE_FILE_NAME));
         }
         Files.createFile(codeHtml);
-        String codeHtmlContent = FileUtil.render(new CodeTemplate(site, "code", codeTreeJSON));
+        String codeHtmlContent = FileUtil.render(new CodeTemplate(site, codeTreeJSON));
         Files.write(codeHtml, codeHtmlContent.getBytes(StandardCharsets.UTF_8));
     }
 
