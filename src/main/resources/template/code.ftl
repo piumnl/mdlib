@@ -14,6 +14,7 @@
     <title>${title}</title>
     <link rel="shortcut icon" href="${uri}/${icon}" title="Favicon" />
     <link href="${uri}/static/css/icon.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="${uri}/static/css/materialize.min.css" media="screen,projection" />
     <link type="text/css" rel="stylesheet" href="${uri}/static/css/metroStyle.css" />
     <style>
         body {
@@ -38,62 +39,40 @@
             width: 100%;
             height: calc(100% - 4px);
         }
+        .search {
+            cursor:pointer;
+            position: absolute;
+            right: 1rem;
+            top: 0.6rem;
+        }
+        #code-tree-div {
+            margin: 0 0 0 0.5rem;
+        }
     </style>
 </head>
 <body>
 <div class="left">
-    <ul id="codeTree" class="ztree"></ul>
+    <div class="col s12">
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" id="search-input" class="autocomplete" name="search" />
+                <i class="material-icons small search">search</i>
+                <label for="search-input">搜索...</label>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div id="code-tree-div">
+        <ul id="codeTree" class="ztree"></ul>
+    </div>
 </div>
 <div class="right">
     <iframe src="" name="content" class="content-iframe"></iframe>
 </div>
 <script type="text/javascript" src="${uri}/static/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="${uri}/static/js/jquery.ztree.all.min.js"></script>
-<script>
-    $(document).ready(function(){
-        let isStandardMode = document.compatMode && document.compatMode === 'CSS1Compat';
-        let body = isStandardMode ? document.documentElement : document.body;
-        let height = body.clientHeight;
-        $('.left').css('height', height);
-        $('.right').css('height', height);
-
-        let setting = {
-            data: {
-                simpleData: {
-                    enable: true
-                }
-            }
-        };
-
-        let zNodes = ${tree};
-        zNodes.target = 'content';
-        nodeAddTarget(zNodes.children);
-        $.fn.zTree.init($("#codeTree"), setting, zNodes);
-    });
-
-    function nodeAddTarget(nodes) {
-        if (!nodes) {
-            return;
-        }
-
-        for (let i = 0; i < nodes.length; i++) {
-            if (nodes[i].children) {
-                nodeAddTarget(nodes[i].children);
-                nodes[i].url = undefined;
-                nodes[i].target = undefined;
-            } else {
-                let extIndex = nodes[i].url.indexOf('.');
-                if (extIndex !== -1) {
-                    nodes[i].name = nodes[i].name.substr(0, nodes[i].name.indexOf('.'));
-                    nodes[i].url = nodes[i].url.substr(0, extIndex) + '.html';
-                    nodes[i].target = nodes[i].target || 'content';
-                } else {
-                    nodes[i].url = undefined;
-                    nodes[i].target = undefined;
-                }
-            }
-        }
-    }
-</script>
+<script type="text/javascript" src="${uri}/static/js/materialize.min.js"></script>
+<script> let nodes = ${tree};</script>
+<script type="text/javascript" src="${uri}/static/js/code.js"></script>
 </body>
 </html>
