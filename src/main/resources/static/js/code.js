@@ -93,7 +93,6 @@ $(document).ready(function(){
 
         // 调用ztree的模糊查询功能，得到符合条件的节点
         let nodeList = zTree.getNodesByParamFuzzy('name', keyword);
-        console.log(nodeList);
         updateNodes(nodeList, true); //更新节点
         lastSearchNode = nodeList;
     });
@@ -119,7 +118,6 @@ $(document).ready(function(){
         let nodes = tree.transformToArray(tree.getNodes());
         for (let i = 0; i < nodes.length; i++) {
             if (nodes[i].level === 0) {
-                console.log(nodes[i].name);
                 // 根节点展开
                 tree.expandNode(nodes[i], true, true, false)
             } else {
