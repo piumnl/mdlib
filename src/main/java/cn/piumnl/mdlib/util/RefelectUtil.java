@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import cn.piumnl.mdlib.annotation.Property;
@@ -17,9 +16,11 @@ import cn.piumnl.mdlib.annotation.Property;
  * @version 1.0.0
  * @since on 2018-04-19.
  */
-public interface RefelectUtil {
+public class RefelectUtil {
 
-    Logger LOGGER = Logger.getLogger("cn.piumnl.mdlib");
+    private RefelectUtil() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * 通过 Properties 对象实例化一个类对象，该类中包含 {@link Property} 注解的字段将会被初始化为 Properties
@@ -29,44 +30,73 @@ public interface RefelectUtil {
      * @param <T> 需要实例化的类
      * @return 实例化后的对象
      */
-    static <T> T inject(Properties properties, Class<T> tClass) {
+    public static <T> T inject(Properties properties, Class<T> tClass) {
         try {
-            Field[] declaredFields = tClass.getDeclaredFields();
-            Property annotation;
-            String value;
             T t = tClass.newInstance();
 
-            for (Field field : declaredFields) {
+            for (Field field : tClass.getDeclaredFields()) {
                 field.setAccessible(true);
 
-                annotation = field.getAnnotation(Property.class);
-                if (annotation != null) {
-                    if (annotation.isPrefix()) {
-                        if (Map.class.isAssignableFrom(field.getType())) {
-                            Map<String, List<String>> map = new HashMap<>();
-                            for (String key : properties.stringPropertyNames()) {
-                                if (key.startsWith(annotation.value())) {
-                                    // 存在 bug ，当没有值的情况
-                                    int indexOf = key.indexOf(annotation.value()) + 1 + annotation.value().length();
-                                    map.put(key.substring(indexOf), Arrays.asList(properties.getProperty(key, "").split(",")));
-                                }
-                            }
-                            setFieldValue(field, t, map, annotation.separator());
-                        } else {
-                            throw new RuntimeException(StringUtil.format("字段 '{}' 的类型应该是Map", field.getName()));
-                        }
-                    } else {
-                        value = properties.getProperty(annotation.value(), annotation.defaultValue());
-                        setFieldValue(field, t, value, annotation.separator());
-                    }
+                Property annotation = field.getAnnotation(Property.class);
+                if (annotation == null) {
+                    break;
                 }
 
+                if (annotation.isPrefix()) {
+                    Map<String, List<String>> map = doPrefixKey(properties, annotation.value(), field);
+                    setFieldValue(field, t, map, annotation.separator());
+                } else {
+                    String value = properties.getProperty(annotation.value(), annotation.defaultValue());
+                    setFieldValue(field, t, value, annotation.separator());
+                }
             }
 
             return t;
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static Map<String, List<String>> doPrefixKey(Properties properties,
+                                                         String annotation,
+                                                         Field field) {
+        // 此字段的类型必须为 Map 的子类
+        if (!Map.class.isAssignableFrom(field.getType())) {
+            throw new RuntimeException(StringUtil.format("字段 '{}' 的类型应该是Map", field.getName()));
+        }
+
+        Map<String, List<String>> map = new HashMap<>(properties.size());
+        for (String key : properties.stringPropertyNames()) {
+            // 避免出现意外中的值
+            if (canInjectValue(properties, annotation, key)) {
+                int indexOf = annotation.length() + ".".length();
+                map.put(key.substring(indexOf), getValueList(properties, key));
+            }
+        }
+
+        return map;
+    }
+
+    /**
+     * 是否可以注入值到 Map 中？注解必须为 key 的前缀，并且 value 中不能为空
+     * @param properties 配置文件对象
+     * @param annotation 注解值
+     * @param key key 值
+     * @return 如果可以返回 true，否则返回 false
+     */
+    private static boolean canInjectValue(Properties properties, String annotation, String key) {
+        // 加 . 是为了避免极端情况，比如 lib.module.xxx 与 lib.moduleXxx。
+        return key.startsWith(annotation + ".") && StringUtil.isNotEmpty(properties.getProperty(key));
+    }
+
+    /**
+     * 将 value 值取出并转换为 {@link List<String>} 对象
+     * @param properties 配置文件对象
+     * @param key key 值
+     * @return value 转换为 {@link List<String>} 后的值
+     */
+    private static List<String> getValueList(Properties properties, String key) {
+        return Arrays.asList(properties.getProperty(key, "").split(","));
     }
 
     /**
@@ -76,7 +106,7 @@ public interface RefelectUtil {
      * @param value 需要设置的值
      * @param separator 如果是集合或数组的话对 value 进行分割的分割符
      */
-    static void setFieldValue(Field field, Object obj, Object value, String separator) {
+    private static void setFieldValue(Field field, Object obj, Object value, String separator) {
         try {
             field.setAccessible(true);
 
