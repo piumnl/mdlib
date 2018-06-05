@@ -2,6 +2,7 @@ package cn.piumnl.mdlib.entity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import cn.piumnl.mdlib.annotation.Property;
 
@@ -47,20 +48,20 @@ public class MdlibProperties {
     /**
      * 列表类型的文章排列
      */
-    @Property(value = "lib.mixed")
-    private List<String> list;
+    @Property(value = "lib.mixed", isPrefix = true)
+    private Map<String, List<String>> list;
 
     /**
      * 可折叠类型的文章排列
      */
-    @Property(value = "lib.module")
-    private List<String> collapsible;
+    @Property(value = "lib.module", isPrefix = true)
+    private Map<String, List<String>> collapsible;
 
     /**
      * 单文章页
      */
-    @Property(value = "lib.single")
-    private List<String> single;
+    @Property(value = "lib.single", isPrefix = true)
+    private Map<String, List<String>> single;
 
     /**
      * 输出目录
@@ -101,15 +102,15 @@ public class MdlibProperties {
         return outPath;
     }
 
-    public List<String> getList() {
+    public Map<String, List<String>> getList() {
         return list;
     }
 
-    public List<String> getCollapsible() {
+    public Map<String, List<String>> getCollapsible() {
         return collapsible;
     }
 
-    public List<String> getSingle() {
+    public Map<String, List<String>> getSingle() {
         return single;
     }
 

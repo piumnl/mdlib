@@ -2,15 +2,14 @@ package cn.piumnl.mdlib.entity;
 
 import java.io.File;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import cn.piumnl.mdlib.util.StringUtil;
 
 /**
  * @author piumnl
@@ -40,9 +39,9 @@ public class Site implements Serializable {
     public Site(MdlibProperties properties) {
         this.properties = properties;
 
-        this.list = convertLibrary(properties.getList().stream(), "list");
-        this.collapsible = convertLibrary(properties.getCollapsible().stream(), "collapsible");
-        this.single = convertLibrary(properties.getSingle().stream(), "single");
+        this.list = convertLibrary(properties.getList(), "list");
+        this.collapsible = convertLibrary(properties.getCollapsible(), "collapsible");
+        this.single = convertLibrary(properties.getSingle(), "single");
         this.codePath = properties.getCode();
 
         this.out = Paths.get(properties.getOutPath());
@@ -50,9 +49,15 @@ public class Site implements Serializable {
         this.staticPath = getMdStaticPath(properties);
     }
 
-    private List<Library> convertLibrary(Stream<String> stream, String type) {
-        return stream.filter(StringUtil::isNotEmpty)
-                     .collect(ArrayList::new, (list, lib) -> list.add(new Library(lib, type)), List::addAll);
+    private List<Library> convertLibrary(Map<String, List<String>> stream, String type) {
+        List<Library> result = new ArrayList<>(stream.size());
+        for (Map.Entry<String, List<String>> entry : stream.entrySet()) {
+            if (entry.getValue() != null && entry.getValue().size() > 0) {
+                result.add(new Library(entry.getKey(), entry.getValue(), type));
+            }
+        }
+
+        return result;
     }
 
     private List<File> getMdStaticPath(MdlibProperties properties) {
@@ -72,6 +77,11 @@ public class Site implements Serializable {
         libraries.addAll(listLib);
         libraries.addAll(collapsibleLib);
         libraries.addAll(singleLib);
+
+        Path codePath = Paths.get(getCodePath());
+        if (Files.exists(codePath)) {
+            libraries.add(new Library("代码库:code", "/code"));
+        }
         return libraries;
     }
 

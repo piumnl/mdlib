@@ -3,6 +3,7 @@ package cn.piumnl.mdlib.entity;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import cn.piumnl.mdlib.util.StringUtil;
 
@@ -25,7 +26,18 @@ public class Library implements Serializable {
         }
 
         initNameAndDir(lib);
-        this.url = urlPrefix + "-" + System.nanoTime() +".html";
+        this.url = urlPrefix + "-" + this.name +".html";
+    }
+
+    public Library(String name, List<String> dir, String type) {
+        if (StringUtil.isEmpty(name)) {
+            throw new RuntimeException("lib is empty!");
+        }
+        Objects.requireNonNull(dir);
+
+        this.name = name;
+        this.dir = dir;
+        this.url = name + ".html";
     }
 
     private void initNameAndDir(String lib) {

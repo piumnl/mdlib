@@ -33,4 +33,10 @@ public @interface Property {
      * @return 针对数组字段的分隔符
      */
     String separator() default ",";
+
+    /**
+     * 是否是作为前缀 key
+     * @return 作为前缀去获取对应的值，默认为 false
+     */
+    boolean isPrefix() default false;
 }
