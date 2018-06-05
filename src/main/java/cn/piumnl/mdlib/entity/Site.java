@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -80,7 +81,7 @@ public class Site implements Serializable {
 
         Path codePath = Paths.get(getCodePath());
         if (Files.exists(codePath)) {
-            libraries.add(new Library("代码库:code", "/code"));
+            libraries.add(new Library("代码库", Collections.singletonList("code"), "other"));
         }
         return libraries;
     }
