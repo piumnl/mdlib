@@ -34,8 +34,8 @@ lib.resource-default | Boolean | true | 是否复制默认的资源文件夹，�
 lib.mixed.name | String |  | 列表格式的索引页面，格式 path,path2
 lib.module.name | String |  | 两层树型格式的索引页面，格式 path,path2
 lib.single.name | String |  | 单独展示的页面，格式 mdPath, 多用于类似 __关于我__ 这种场景
-lib.out | String |  | 输出目录
-lib.code | String |  | 要识别的代码库目录
+lib.out | String | mdlib | 输出目录
+lib.code | String | code | 要识别的代码库目录
 
 关于 lib.mixed 、 lib.module 和 lib.single 格式有如下示例：
 
