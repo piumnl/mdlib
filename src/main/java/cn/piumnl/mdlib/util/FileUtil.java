@@ -41,7 +41,7 @@ import cn.piumnl.mdlib.template.LibraryTemplate;
  */
 public class FileUtil {
 
-    private static Logger logger = Logger.getLogger("cn.piumnl.mdlib");
+    private static final Logger LOGGER = Logger.getLogger("cn.piumnl.mdlib");
 
     private static Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
 
@@ -166,7 +166,7 @@ public class FileUtil {
     }
 
     public static String readFile(File file) throws IOException {
-        logger.fine(StringUtil.format("read file '{}'!", file.getAbsolutePath()));
+        LOGGER.fine(StringUtil.format("read file '{}'!", file.getAbsolutePath()));
         List<String> allLines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
         StringBuilder builder = new StringBuilder();
         for (String line : allLines) {
@@ -206,7 +206,7 @@ public class FileUtil {
     private static void deleteFile(File f) {
         deleteAllFiles(f);
         if (!f.delete()) {
-            RefelectUtil.LOGGER.warning(StringUtil.format("can't delete {}", f.getAbsolutePath()));
+            LOGGER.warning(StringUtil.format("can't delete {}", f.getAbsolutePath()));
         }
     }
 
@@ -223,7 +223,7 @@ public class FileUtil {
 
             Files.createFile(resolve);
         } else {
-            RefelectUtil.LOGGER.info(StringUtil.format("file {} is exists!", resolve.toAbsolutePath()));
+            LOGGER.info(StringUtil.format("file {} is exists!", resolve.toAbsolutePath()));
         }
     }
 
