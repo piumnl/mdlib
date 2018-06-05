@@ -1,7 +1,6 @@
 package cn.piumnl.mdlib.entity;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,16 +19,7 @@ public class Library implements Serializable {
 
     private String url;
 
-    public Library(String lib, String urlPrefix) {
-        if (StringUtil.isEmpty(lib)) {
-            throw new RuntimeException("lib is empty!");
-        }
-
-        initNameAndDir(lib);
-        this.url = urlPrefix + "-" + this.name +".html";
-    }
-
-    public Library(String name, List<String> dir, String type) {
+    public Library(String name, List<String> dir) {
         if (StringUtil.isEmpty(name)) {
             throw new RuntimeException("lib is empty!");
         }
@@ -38,17 +28,6 @@ public class Library implements Serializable {
         this.name = name;
         this.dir = dir;
         this.url = name + ".html";
-    }
-
-    private void initNameAndDir(String lib) {
-        String[] split = lib.split(":");
-        if (split.length != 2) {
-            throw new RuntimeException(StringUtil.format("lib format invalid: '{}'", lib));
-        }
-
-        String path = split[1];
-        this.dir = Collections.singletonList(path.startsWith("/") ? path.substring(1) : path);
-        this.name = split[0];
     }
 
     public String getName() {

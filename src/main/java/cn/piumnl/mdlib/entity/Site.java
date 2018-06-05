@@ -40,9 +40,9 @@ public class Site implements Serializable {
     public Site(MdlibProperties properties) {
         this.properties = properties;
 
-        this.list = convertLibrary(properties.getList(), "list");
-        this.collapsible = convertLibrary(properties.getCollapsible(), "collapsible");
-        this.single = convertLibrary(properties.getSingle(), "single");
+        this.list = convertLibrary(properties.getList());
+        this.collapsible = convertLibrary(properties.getCollapsible());
+        this.single = convertLibrary(properties.getSingle());
         this.codePath = properties.getCode();
 
         this.out = Paths.get(properties.getOutPath());
@@ -50,11 +50,11 @@ public class Site implements Serializable {
         this.staticPath = getMdStaticPath(properties);
     }
 
-    private List<Library> convertLibrary(Map<String, List<String>> stream, String type) {
+    private List<Library> convertLibrary(Map<String, List<String>> stream) {
         List<Library> result = new ArrayList<>(stream.size());
         for (Map.Entry<String, List<String>> entry : stream.entrySet()) {
             if (entry.getValue() != null && entry.getValue().size() > 0) {
-                result.add(new Library(entry.getKey(), entry.getValue(), type));
+                result.add(new Library(entry.getKey(), entry.getValue()));
             }
         }
 
@@ -81,7 +81,7 @@ public class Site implements Serializable {
 
         Path codePath = Paths.get(getCodePath());
         if (Files.exists(codePath)) {
-            libraries.add(new Library("代码库", Collections.singletonList("code"), "other"));
+            libraries.add(new Library("代码库", Collections.singletonList("code")));
         }
         return libraries;
     }
