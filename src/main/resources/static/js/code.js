@@ -8,9 +8,13 @@ const TREE_ID = 'codeTree';
         let isStandardMode = document.compatMode && document.compatMode === 'CSS1Compat';
         let body = isStandardMode ? document.documentElement : document.body;
         let height = body.clientHeight;
-        $('.left').css('height', height);
-        $('.right').css('height', height);
+        $('.code-left').css('height', height);
+        $('.code-right').css('height', height);
+        // $('.content-iframe').css('height', height);
     };
+    // $('.content-iframe').bind('load', function () {
+    //     this.height = content.document.body.scrollHeight;
+    // });
     initCss();
 
     /**

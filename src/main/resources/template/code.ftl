@@ -24,20 +24,20 @@
             padding: 0;
             margin: 0;
         }
-        .left {
+        .code-left {
             width: 30%;
             float: left;
             border-right: 1px solid #CCC;
             overflow: auto;
         }
-        .right {
+        .code-right {
             margin-left: 30%;
             overflow: auto;
         }
         .content-iframe {
             border: none;
             width: 100%;
-            height: calc(100% - 4px);
+            height: calc(100% - 0.4rem);
         }
         .search {
             cursor:pointer;
@@ -51,7 +51,7 @@
     </style>
 </head>
 <body>
-<div class="left">
+<div class="code-left">
     <div class="col s12">
         <div class="row">
             <div class="input-field col s12">
@@ -66,7 +66,7 @@
         <ul id="codeTree" class="ztree"></ul>
     </div>
 </div>
-<div class="right">
+<div class="code-right">
     <iframe src="" name="content" class="content-iframe"></iframe>
 </div>
 <script type="text/javascript" src="${uri}/static/js/jquery-3.2.1.min.js"></script>
