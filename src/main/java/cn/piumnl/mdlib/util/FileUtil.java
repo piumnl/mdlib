@@ -4,19 +4,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.jar.JarFile;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
@@ -29,8 +25,6 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-
-import org.apache.commons.io.FilenameUtils;
 
 import cn.piumnl.mdlib.template.LibraryTemplate;
 
@@ -67,14 +61,35 @@ public class FileUtil {
         }
     }
 
-    public static JarFile getJar(URL url) {
+    public static String generatedOutPath(Path fileRootPath, Path path, Path outPath) {
+        Path relativize = fileRootPath.relativize(path);
+        Path fileOutpath = outPath.resolve(relativize);
+
+        String absolutePath = fileOutpath.toFile().getAbsolutePath();
+        int i = absolutePath.lastIndexOf('.');
+        return absolutePath.substring(0, i);
+    }
+
+    public static String classPath() {
         try {
-            return ((JarURLConnection) url.openConnection()).getJarFile();
-        } catch (IOException e) {
+            return FileUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public static File classPath(String file) {
+        return new File(classPath() + File.separator + file);
+    }
+
+    //region 文件操作
+
+    /**
+     * 复制目录
+     * @param sourcePath 源文件目录
+     * @param targetPath 目标文件目录
+     * @throws IOException
+     */
     public static void copyFolder(File sourcePath, Path targetPath) throws IOException {
         copyFolder(sourcePath, targetPath, com.google.common.io.Files::copy);
     }
@@ -110,13 +125,97 @@ public class FileUtil {
     }
 
     /**
+     * 创建单个文件，如果父级不存在就创建父级目录
+     * @param resolve 目录对象
+     * @throws IOException 当发生 IO 错误时抛出
+     */
+    public static void createFile(Path resolve) throws IOException {
+        if (Files.notExists(resolve)) {
+            Path parent = resolve.getParent();
+            if (parent == null) {
+                parent = resolve.toAbsolutePath().getParent();
+            }
+
+            if (parent != null && Files.notExists(parent)) {
+                Files.createDirectories(parent);
+            }
+
+            Files.createFile(resolve);
+        } else {
+            LOGGER.info(StringUtil.format("file {} is exists!", resolve.toAbsolutePath()));
+        }
+    }
+
+    /**
+     * 删除目录下所有内容，不包含目录本身
+     * @param root 目录对象
+     */
+    public static void deleteDirectory(File root) {
+        File[] files = root.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        for (File f : files) {
+            if (f.isDirectory()) {
+                deleteFile(f);
+            } else {
+                if (f.exists()) {
+                    deleteFile(f);
+                }
+            }
+        }
+    }
+
+    /**
+     * 删除单个文件或目录
+     * @param f 文件或目录对象
+     */
+    private static void deleteFile(File f) {
+        deleteDirectory(f);
+        if (!f.delete()) {
+            LOGGER.warning(StringUtil.format("can't delete {}", f.getAbsolutePath()));
+        }
+    }
+
+    /**
+     * 读取文件为一个字符串
+     * @param file 文件对象
+     * @return 该文件的所有数据
+     * @throws IOException 当读取文件出现 IO 问题时抛出
+     */
+    public static String readFile(File file) throws IOException {
+        LOGGER.fine(StringUtil.format("read file '{}'!", file.getAbsolutePath()));
+        List<String> allLines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+        StringBuilder builder = new StringBuilder();
+        for (String line : allLines) {
+            builder.append(line).append('\n');
+        }
+
+        return builder.toString();
+    }
+
+    //endregion
+
+    //region 渲染操作
+
+    /**
+     * 渲染模板
+     * @param template 渲染页面所需要的内容
+     * @return 渲染后的页面内容
+     * @throws IOException 当写入数据到文件出现的 IO 写入错误时抛出
+     */
+    public static String render(LibraryTemplate template) throws IOException {
+        return render(template.dataModel(), template.ftlPath());
+    }
+
+    /**
      * freemarker 页面渲染
      *
      * @param dataModel 页面数据
      * @param ftlPath   ftl 页面路径
      * @return 渲染后的页面
-     * @throws IOException       .
-     * @throws TemplateException .
+     * @throws IOException 当写入数据到文件出现的 IO 写入错误时抛出
      */
     public static String render(Object dataModel, String ftlPath) throws IOException {
         Template template = cfg.getTemplate(ftlPath);
@@ -127,16 +226,6 @@ public class FileUtil {
             throw new RuntimeException(e);
         }
         return out.toString();
-    }
-
-    /**
-     * 渲染模板
-     * @param template 渲染页面所需要的内容
-     * @return 渲染后的页面内容
-     * @throws IOException
-     */
-    public static String render(LibraryTemplate template) throws IOException {
-        return render(template.dataModel(), template.ftlPath());
     }
 
     /**
@@ -156,94 +245,5 @@ public class FileUtil {
         return renderer.render(document);
     }
 
-    public static String generatedOutPath(Path fileRootPath, Path path, Path outPath) {
-        Path relativize = fileRootPath.relativize(path);
-        Path fileOutpath = outPath.resolve(relativize);
-
-        String absolutePath = fileOutpath.toFile().getAbsolutePath();
-        int i = absolutePath.lastIndexOf('.');
-        return absolutePath.substring(0, i);
-    }
-
-    public static String readFile(File file) throws IOException {
-        LOGGER.fine(StringUtil.format("read file '{}'!", file.getAbsolutePath()));
-        List<String> allLines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-        StringBuilder builder = new StringBuilder();
-        for (String line : allLines) {
-            builder.append(line).append('\n');
-        }
-
-        return builder.toString();
-    }
-
-    public static Path getPath(Path path) {
-        URL resource = FileUtil.class.getResource("/");
-        try {
-            Path rootPath = Paths.get(resource.toURI());
-            return rootPath.resolve(path);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void deleteAllFiles(File root) {
-        File[] files = root.listFiles();
-        if (files == null) {
-            return;
-        }
-
-        for (File f : files) {
-            if (f.isDirectory()) {
-                deleteFile(f);
-            } else {
-                if (f.exists()) {
-                    deleteFile(f);
-                }
-            }
-        }
-    }
-
-    private static void deleteFile(File f) {
-        deleteAllFiles(f);
-        if (!f.delete()) {
-            LOGGER.warning(StringUtil.format("can't delete {}", f.getAbsolutePath()));
-        }
-    }
-
-    public static void createFile(Path resolve) throws IOException {
-        if (Files.notExists(resolve)) {
-            Path parent = resolve.getParent();
-            if (parent == null) {
-                parent = resolve.toAbsolutePath().getParent();
-            }
-
-            if (parent != null && Files.notExists(parent)) {
-                Files.createDirectories(parent);
-            }
-
-            Files.createFile(resolve);
-        } else {
-            LOGGER.info(StringUtil.format("file {} is exists!", resolve.toAbsolutePath()));
-        }
-    }
-
-    public static String classPath() {
-        try {
-            return FileUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static File classPath(String file) {
-        return new File(classPath() + File.separator + file);
-    }
-
-    public static boolean isBinary(String file) {
-        String extension = FilenameUtils.getExtension(file).toLowerCase();
-
-
-        return Stream.of("png", "jpg", "jpeg", "bmp", "gif", "svg", "gif", "ico", "woff", "woff2")
-                     .anyMatch(s -> s.equals(extension));
-    }
+    //endregion
 }

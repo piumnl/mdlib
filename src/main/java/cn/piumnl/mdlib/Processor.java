@@ -326,7 +326,7 @@ public class Processor {
     }
 
     private void deleteAllFiles(Path out) {
-        FileUtil.deleteAllFiles(out.toFile());
+        FileUtil.deleteDirectory(out.toFile());
     }
 
     private void copyComplexPath(List<File> stylePath, Path output) throws IOException {
