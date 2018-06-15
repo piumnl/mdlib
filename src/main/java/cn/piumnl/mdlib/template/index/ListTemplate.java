@@ -1,4 +1,4 @@
-package cn.piumnl.mdlib.template;
+package cn.piumnl.mdlib.template.index;
 
 import java.util.HashMap;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.Map;
 
 import cn.piumnl.mdlib.entity.Article;
 import cn.piumnl.mdlib.entity.Site;
+import cn.piumnl.mdlib.template.AbstractLibraryTemplate;
 
 /**
  * @author piumnl

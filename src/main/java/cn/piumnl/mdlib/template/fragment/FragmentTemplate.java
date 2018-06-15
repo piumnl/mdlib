@@ -1,9 +1,10 @@
-package cn.piumnl.mdlib.template;
+package cn.piumnl.mdlib.template.fragment;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.piumnl.mdlib.entity.Site;
+import cn.piumnl.mdlib.template.AbstractLibraryTemplate;
 
 /**
  * @author piumnl
