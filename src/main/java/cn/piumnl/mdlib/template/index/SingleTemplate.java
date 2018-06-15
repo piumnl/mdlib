@@ -10,6 +10,8 @@ import cn.piumnl.mdlib.template.AbstractLibraryTemplate;
 import cn.piumnl.mdlib.util.FileUtil;
 
 /**
+ * 单文件模板
+ *
  * @author piumnl
  * @version 1.0.0
  * @since on 2018-04-06.

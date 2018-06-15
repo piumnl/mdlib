@@ -7,6 +7,8 @@ import cn.piumnl.mdlib.entity.Site;
 import cn.piumnl.mdlib.template.AbstractLibraryTemplate;
 
 /**
+ * 代码片段模板
+ *
  * @author piumnl
  * @version 1.0.0
  * @since on 2018-06-04.

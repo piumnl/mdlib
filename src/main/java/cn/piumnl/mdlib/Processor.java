@@ -25,7 +25,7 @@ import cn.piumnl.mdlib.template.fragment.CodeTemplate;
 import cn.piumnl.mdlib.template.index.CollapsibleTemplate;
 import cn.piumnl.mdlib.template.fragment.FragmentTemplate;
 import cn.piumnl.mdlib.template.index.ListTemplate;
-import cn.piumnl.mdlib.template.MarkdownTemplate;
+import cn.piumnl.mdlib.template.md.MarkdownTemplate;
 import cn.piumnl.mdlib.template.index.SingleTemplate;
 import cn.piumnl.mdlib.util.FileUtil;
 import cn.piumnl.mdlib.util.ResourceUtil;

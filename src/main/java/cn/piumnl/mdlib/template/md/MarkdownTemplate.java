@@ -1,4 +1,4 @@
-package cn.piumnl.mdlib.template;
+package cn.piumnl.mdlib.template.md;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,9 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.piumnl.mdlib.entity.Site;
+import cn.piumnl.mdlib.template.AbstractLibraryTemplate;
 import cn.piumnl.mdlib.util.FileUtil;
 
 /**
+ * 文章模板
+ *
  * @author piumnl
  * @version 1.0.0
  * @since on 2018-04-06.
