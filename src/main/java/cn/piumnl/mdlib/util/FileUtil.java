@@ -92,7 +92,17 @@ public class FileUtil {
      * @throws IOException
      */
     public static void copyFolder(File sourcePath, Path targetPath) throws IOException {
-        copyFolder(sourcePath, targetPath, com.google.common.io.Files::copy);
+        copyFolder(sourcePath, targetPath, FileUtil::copy);
+    }
+
+    /**
+     * 两个文件进行复制
+     * @param source 源文件
+     * @param target 目标文件
+     * @throws IOException IO 读写异常
+     */
+    public static void copy(File source, File target) throws IOException {
+        Files.copy(source.toPath(), target.toPath());
     }
 
     public static void copyFolder(File sourcePath, Path targetPath, FileFuncational<File> consumer)
