@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import cn.piumnl.mdlib.Application;
 import cn.piumnl.mdlib.util.IOUtil;
+import cn.piumnl.mdlib.util.LoggerUtil;
 
 /**
  * @author piumnl
@@ -18,7 +19,8 @@ import cn.piumnl.mdlib.util.IOUtil;
  */
 public class ServerRequest {
 
-    private static final Logger LOGGER = Logger.getLogger(ServerRequest.class.getName());
+    private static final Logger LOGGER = LoggerUtil.SERVER_LOGGER;
+
     private static final String INDEX_HTML = "/index.html";
 
     private InputStream inputStream;

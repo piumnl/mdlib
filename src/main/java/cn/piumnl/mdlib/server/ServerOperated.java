@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 import cn.piumnl.mdlib.util.IOUtil;
+import cn.piumnl.mdlib.util.LoggerUtil;
 import cn.piumnl.mdlib.util.StringUtil;
 
 /**
@@ -24,7 +25,7 @@ import cn.piumnl.mdlib.util.StringUtil;
  */
 public class ServerOperated {
 
-    private static final Logger LOGGER = Logger.getLogger(ServerOperated.class.getName());
+    private static final Logger LOGGER = LoggerUtil.SERVER_LOGGER;
 
     private OutputStream client;
 
