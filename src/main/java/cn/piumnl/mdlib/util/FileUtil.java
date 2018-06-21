@@ -48,6 +48,7 @@ public class FileUtil {
     }
 
     private FileUtil() {
+        throw new UnsupportedOperationException();
     }
 
     public static boolean isJar() {

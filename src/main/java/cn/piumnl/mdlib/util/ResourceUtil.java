@@ -26,6 +26,7 @@ import java.util.zip.ZipEntry;
 public class ResourceUtil {
 
     private ResourceUtil() {
+        throw new UnsupportedOperationException();
     }
 
     public static Properties loadProperties(String name) throws IOException {
