@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -21,7 +20,10 @@ import org.apache.commons.cli.ParseException;
 
 import cn.piumnl.mdlib.entity.MdlibProperties;
 import cn.piumnl.mdlib.entity.Site;
+import cn.piumnl.mdlib.handler.Handler;
 import cn.piumnl.mdlib.server.ServerContext;
+import cn.piumnl.mdlib.util.FileUtil;
+import cn.piumnl.mdlib.util.LoggerUtil;
 import cn.piumnl.mdlib.util.RefelectUtil;
 import cn.piumnl.mdlib.util.ResourceUtil;
 import cn.piumnl.mdlib.util.StringUtil;
@@ -38,7 +40,7 @@ public class Application {
      */
     public static String outPath;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         initLogger();
         Site processor = processor();
         outPath = processor.getOut().toAbsolutePath().toString();
@@ -87,9 +89,8 @@ public class Application {
             }
 
             if (commandLine.hasOption(runOpt.getOpt())) {
-                Logger logger = Logger.getLogger(ServerContext.class.getName());
                 ServerSocket server = new ServerSocket(port);
-                logger.info(StringUtil.format("静态资源服务器正在运行，端口为 {0}， 完整地址： http://localhost:{0}/", port));
+                LoggerUtil.SERVER_LOGGER.info(StringUtil.format("静态资源服务器正在运行，端口为 {0}， 完整地址： http://localhost:{0}/", port));
 
                 Socket client;
                 while (true) {
@@ -103,7 +104,7 @@ public class Application {
         }
     }
 
-    private static Site processor() throws IOException {
+    private static Site processor() throws Exception {
         // 读取配置文件 application.properties
         Path path = Paths.get("application.properties");
         Properties properties = ResourceUtil.loadProperties("/application.properties");
@@ -113,9 +114,7 @@ public class Application {
         }
 
         Site site = new Site(RefelectUtil.inject(properties, MdlibProperties.class));
-
-        Processor processor = new Processor(site);
-        processor.processor();
+        initProcessor(site);
 
         return site;
     }
@@ -126,8 +125,28 @@ public class Application {
         try {
             LogManager.getLogManager().readConfiguration(stream);
         } catch (IOException e) {
-            Logger.getLogger(Application.class.getName()).severe(e.getMessage());
+            LoggerUtil.MDLIB_LOGGER.severe(e.getMessage());
         }
+    }
+
+    private static void initProcessor(Site site) throws Exception {
+        // 删除输出目录所有文件
+        FileUtil.deleteDirectory(site.getOut().toFile());
+        if (site.isDefaultStaticPath()) {
+            if (FileUtil.isJar()) {
+                ResourceUtil.copyJarResource(site.getOut(), name -> name.startsWith("static/") && !name.endsWith("/"));
+            } else {
+                site.getStaticPath().add(FileUtil.classPath("static"));
+            }
+        } else {
+            if (FileUtil.isJar()) {
+                ResourceUtil.copyJarResource(site.getOut(), name -> StringUtil.equals(name, Site.STATIC_ML_ICO));
+            } else {
+                site.getStaticPath().add(FileUtil.classPath(Site.STATIC_ML_ICO));
+            }
+        }
+
+        Handler.initHandler(site);
     }
 }
 
