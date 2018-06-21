@@ -12,7 +12,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
@@ -34,8 +33,6 @@ import cn.piumnl.mdlib.template.LibraryTemplate;
  * @since on 2018-03-25.
  */
 public class FileUtil {
-
-    private static final Logger LOGGER = Logger.getLogger("cn.piumnl.mdlib");
 
     private static Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
 
@@ -153,7 +150,7 @@ public class FileUtil {
 
             Files.createFile(resolve);
         } else {
-            LOGGER.info(StringUtil.format("file {} is exists!", resolve.toAbsolutePath()));
+            LoggerUtil.MDLIB_LOGGER.info(StringUtil.format("file {} is exists!", resolve.toAbsolutePath()));
         }
     }
 
@@ -185,7 +182,7 @@ public class FileUtil {
     private static void deleteFile(File f) {
         deleteDirectory(f);
         if (!f.delete()) {
-            LOGGER.warning(StringUtil.format("can't delete {}", f.getAbsolutePath()));
+            LoggerUtil.MDLIB_LOGGER.warning(StringUtil.format("can't delete {}", f.getAbsolutePath()));
         }
     }
 
@@ -196,7 +193,7 @@ public class FileUtil {
      * @throws IOException 当读取文件出现 IO 问题时抛出
      */
     public static String readFile(File file) throws IOException {
-        LOGGER.fine(StringUtil.format("read file '{}'!", file.getAbsolutePath()));
+        LoggerUtil.MDLIB_LOGGER.fine(StringUtil.format("read file '{}'!", file.getAbsolutePath()));
         List<String> allLines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
         StringBuilder builder = new StringBuilder();
         for (String line : allLines) {
