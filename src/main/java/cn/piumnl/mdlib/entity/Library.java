@@ -13,10 +13,19 @@ import cn.piumnl.mdlib.util.StringUtil;
  */
 public class Library implements Serializable {
 
+    /**
+     * 库名，比如 Java、JavaScript 等，存在于页面的导航栏中。
+     */
     private String name;
 
+    /**
+     * 该库所存放的文件所在目录，此处可以为多个目录
+     */
     private List<String> dir;
 
+    /**
+     * 页面地址
+     */
     private String url;
 
     public Library(String name, List<String> dir) {
