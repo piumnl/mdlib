@@ -48,4 +48,5 @@ lib.module.Java = core,framework
 lib.single.关于我 = about.md
 ```
 
-__不能在 代码库 该目录下存放二进制文件，否则可能读取文件失败（比如 pdf、doc(x)、xmind等）__
+因为 `代码库` 中的所有文件将会作为文本读取，
+__所以不能在 `代码库` 该目录下存放二进制文件（比如 pdf、doc(x)、xmind等文件类型）__。
