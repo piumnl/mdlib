@@ -55,6 +55,8 @@ public class ArchiveIndex implements Serializable, Comparable<ArchiveIndex> {
 
     @Override
     public int compareTo(ArchiveIndex index) {
-        return this.getName().compareTo(index.getName());
+        String s1 = this.getName().toLowerCase();
+        String s2 = index.getName().toLowerCase();
+        return String.CASE_INSENSITIVE_ORDER.compare(s1, s2);
     }
 }
