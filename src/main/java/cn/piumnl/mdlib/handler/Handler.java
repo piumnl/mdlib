@@ -43,6 +43,8 @@ public interface Handler {
         SingleHandler.getInstance().process(site);
         // code 处理
         CodeTreeHandler.getInstance().process(site);
+        // 首页处理
+        IndexHandler.getInstance().process(site);
     }
 
     /**
@@ -64,5 +66,7 @@ public interface Handler {
         SingleHandler.getInstance().refresh(site);
         // code 处理
         CodeTreeHandler.getInstance().refresh(site);
+        // 首页处理
+        IndexHandler.getInstance().process(site);
     }
 }
