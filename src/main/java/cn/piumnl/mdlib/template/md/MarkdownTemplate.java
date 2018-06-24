@@ -2,8 +2,10 @@ package cn.piumnl.mdlib.template.md;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,8 +22,6 @@ import cn.piumnl.mdlib.util.FileUtil;
  */
 public class MarkdownTemplate extends AbstractLibraryTemplate {
 
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     private String content;
 
     private String lastModifiedTime;
@@ -29,7 +29,8 @@ public class MarkdownTemplate extends AbstractLibraryTemplate {
     public MarkdownTemplate(Site site, String name, String content, long lastModifiedTime) {
         super(site, name, "markdown.ftl");
         this.content = content;
-        this.lastModifiedTime = dateFormat.format(new Date(lastModifiedTime));
+        ZonedDateTime zonedDateTime = Instant.ofEpochMilli(lastModifiedTime).atZone(ZoneId.systemDefault());
+        this.lastModifiedTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(zonedDateTime);
     }
 
     public MarkdownTemplate(Site site, File file) throws IOException {
