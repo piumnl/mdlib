@@ -42,18 +42,18 @@ public class Application {
 
     public static void main(String[] args) throws Exception {
         initLogger();
-        Site processor = processor();
-        outPath = processor.getOut().toAbsolutePath().toString();
+        Site site = processor();
+        outPath = site.getOut().toAbsolutePath().toString();
 
-        parseArgs(args);
+        parseArgs(args, site);
     }
 
-    private static void parseArgs(String[] args) throws IOException {
+    private static void parseArgs(String[] args, Site site) throws IOException {
         Options options = new Options();
 
         //短选项，长选项，选项后是否有参数，描述
         Option runOpt = new Option("r", "run", false, "是否运行静态服务器");
-        Option flushOpt = new Option("f", "flush", false, "是否实时刷新 md 文件");
+        Option flushOpt = new Option("f", "refresh", true, "是否实时刷新 md 文件，刷新的时间间隔最小为 1 秒");
         Option portOpt = new Option("p", "port", true, "静态服务器所占端口");
 
         // 是否必须
@@ -78,14 +78,30 @@ public class Application {
             }
 
             if (commandLine.hasOption(flushOpt.getOpt())) {
-                // Executors.newCachedThreadPool()
-                // BasicThreadFactory build =
-                //         new BasicThreadFactory.Builder()
-                //                 .namingPattern("flush-md-%d")
-                //                 .daemon(true)
-                //                 .build();
-                // ScheduledThreadPoolExecutor service = new ScheduledThreadPoolExecutor(1, build);
-                // service.
+                long sleepTime = Long.parseLong(commandLine.getOptionValue(flushOpt.getOpt()));
+                final long time = sleepTime < 1000 ? 1000 : sleepTime;
+                LoggerUtil.MDLIB_LOGGER.info("定时刷新时间为 {}", time);
+                new Thread(() -> {
+                    while (true) {
+                        try {
+                            try {
+                                Thread.sleep(time);
+                                LoggerUtil.MDLIB_LOGGER.info("Refreshing...");
+                                Handler.refreshHandler(site);
+                                LoggerUtil.MDLIB_LOGGER.info("Refresh finished!");
+                            } catch (InterruptedException e) {
+                                LoggerUtil.MDLIB_LOGGER.error(e.getMessage());
+                                throw new RuntimeException(e);
+                            } catch (Exception e) {
+                                LoggerUtil.MDLIB_LOGGER.error(e.getMessage());
+                                throw new RuntimeException(e);
+                            }
+                        } catch (RuntimeException e) {
+                            e.printStackTrace();
+                            // do nothing
+                        }
+                    }
+                }).start();
             }
 
             if (commandLine.hasOption(runOpt.getOpt())) {
@@ -125,7 +141,7 @@ public class Application {
         try {
             LogManager.getLogManager().readConfiguration(stream);
         } catch (IOException e) {
-            LoggerUtil.MDLIB_LOGGER.severe(e.getMessage());
+            LoggerUtil.MDLIB_LOGGER.error(e.getMessage());
         }
     }
 
