@@ -63,7 +63,7 @@ public class FileUtil {
         Path relativize = fileRootPath.relativize(path);
         Path fileOutpath = outPath.resolve(relativize);
 
-        String absolutePath = fileOutpath.toFile().getAbsolutePath();
+        String absolutePath = fileOutpath.toAbsolutePath().normalize().toFile().getPath();
         int i = absolutePath.lastIndexOf('.');
         return absolutePath.substring(0, i);
     }

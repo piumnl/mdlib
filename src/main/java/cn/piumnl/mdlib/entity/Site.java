@@ -37,10 +37,6 @@ public class Site implements Serializable {
 
     private String codePath;
 
-    // todo for piumnl: 有必要还是删除此字段，避免后期维护的复杂性
-
-    private List<String> allFile = new ArrayList<>();
-
     public Site(MdlibProperties properties) {
         this.properties = properties;
 
@@ -136,13 +132,5 @@ public class Site implements Serializable {
 
     public String getCodePath() {
         return codePath;
-    }
-
-    public List<String> getAllFile() {
-        return allFile;
-    }
-
-    public void addMdFile(String file) {
-        allFile.add(file);
     }
 }

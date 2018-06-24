@@ -1,5 +1,6 @@
 package cn.piumnl.mdlib.handler;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,28 +18,40 @@ import cn.piumnl.mdlib.entity.Site;
  */
 public abstract class AbstractLibraryTemplateHandler implements Handler {
 
-    protected static List<Article> getArticles(Site render, Library lib, List<String> allFile) {
+    protected List<Article> getArticles(Site render, Library lib) {
         // 指定要生成的目录
         List<String> filterList =
                 lib.getDir()
                    .stream()
-                   .map(s -> render.getOut().toAbsolutePath().resolve(Paths.get(s).toFile().getName()).toString())
+                   .map(s -> render.getOut().toAbsolutePath().resolve(Paths.get(s).toFile().getName()).normalize().toString())
                    .collect(Collectors.toList());
+        int libDir = render.getOut().toAbsolutePath().normalize().resolve(lib.getName()).toString().length();
         // 对所有已渲染的文件进行过滤
         List<Article> collect = new ArrayList<>();
-        for (String file : allFile) {
-            for (String filter : filterList) {
-                if (file.startsWith(filter)) {
-                    collect.add(new Article(getRelativizePath(render, file)));
-                    break;
-                }
+        for (String article : filterList) {
+            File file = new File(article);
+            if (file.isDirectory()) {
+                findDirectoryFile(file, collect, libDir, lib.getName());
+            } else {
+                collect.add(new Article(Paths.get(lib.getName(), file.getAbsolutePath().substring(libDir))));
             }
         }
         return collect;
     }
 
-    protected static Path getRelativizePath(Site render, String renderFilePath) {
-        return render.getOut().toAbsolutePath().relativize(Paths.get(renderFilePath));
+    private void findDirectoryFile(File dir, List<Article> collect, int site, String libName) {
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                findDirectoryFile(file, collect, site, libName);
+            } else if (file.isFile()) {
+                collect.add(new Article(Paths.get(libName,file.getAbsolutePath().substring(site))));
+            }
+        }
     }
 
     protected static Path resolvePath(Site render, String resolvePath) {
