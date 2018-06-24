@@ -12,7 +12,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 import cn.piumnl.mdlib.util.IOUtil;
 import cn.piumnl.mdlib.util.LoggerUtil;
@@ -25,7 +24,7 @@ import cn.piumnl.mdlib.util.StringUtil;
  */
 public class ServerOperated {
 
-    private static final Logger LOGGER = LoggerUtil.SERVER_LOGGER;
+    private static final LoggerUtil.Log LOGGER = LoggerUtil.SERVER_LOGGER;
 
     private OutputStream client;
 
@@ -42,7 +41,7 @@ public class ServerOperated {
     public void close() {
         try {
             this.client.close();
-            LOGGER.fine(StringUtil.format("{} 离开了 HTTP 服务器！", client));
+            LOGGER.trace(StringUtil.format("{} 离开了 HTTP 服务器！", client));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

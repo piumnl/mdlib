@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Logger;
 
 import cn.piumnl.mdlib.Application;
 import cn.piumnl.mdlib.util.IOUtil;
@@ -19,7 +18,7 @@ import cn.piumnl.mdlib.util.LoggerUtil;
  */
 public class ServerRequest {
 
-    private static final Logger LOGGER = LoggerUtil.SERVER_LOGGER;
+    private static final LoggerUtil.Log LOGGER = LoggerUtil.SERVER_LOGGER;
 
     private static final String INDEX_HTML = "/index.html";
 
@@ -42,12 +41,12 @@ public class ServerRequest {
         BufferedReader reader = new BufferedReader(IOUtil.wrapperIn(inputStream));
         String header = reader.readLine();
 
-        LOGGER.fine(">>>: " + header);
+        LOGGER.trace(">>>: " + header);
         // 读取所有浏览器发送过来的请求参数头部的所有信息
 
         // 获得请求的资源的地址
         resourcePath = header.split(" ")[1];
-        LOGGER.fine("\tresource path:" + resourcePath);
+        LOGGER.trace("\tresource path:" + resourcePath);
 
         if ("/".equals(resourcePath)) {
             resourcePath = INDEX_HTML;
