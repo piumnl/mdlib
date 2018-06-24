@@ -25,10 +25,10 @@ public abstract class AbstractLibraryTemplateHandler implements Handler {
                    .stream()
                    .map(s -> render.getOut().toAbsolutePath().resolve(Paths.get(s).toFile().getName()).normalize().toString())
                    .collect(Collectors.toList());
-        int libDir = render.getOut().toAbsolutePath().normalize().resolve(lib.getName()).toString().length();
         // 对所有已渲染的文件进行过滤
         List<Article> collect = new ArrayList<>();
         for (String article : filterList) {
+            int libDir = article.length();
             File file = new File(article);
             if (file.isDirectory()) {
                 findDirectoryFile(file, collect, libDir, lib.getName());
