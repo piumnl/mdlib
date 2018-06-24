@@ -25,23 +25,36 @@ import cn.piumnl.mdlib.util.LoggerUtil;
  */
 public class CollapsibleHandler extends AbstractLibraryTemplateHandler {
 
+    private static final CollapsibleHandler HANDLER = new CollapsibleHandler();
+
+    private CollapsibleHandler() {
+    }
+
+    public static CollapsibleHandler getInstance() {
+        return HANDLER;
+    }
+
+    @Override
+    public void refresh(Site site) throws Exception {
+        // todo for piumnl: refresh
+    }
+
     @Override
     public void process(Site site) throws IOException {
         for (Library lib : site.getCollapsible()) {
-
             // 指定要生成的目录
-            List<Article> collect = getArticles(site, lib, site.getAllFile());
+            List<Article> collect = getArticles(site, lib);
 
             // 渲染
-            // 指定一个 8 ，一般可能不会超过 8，默认为16
+            // 指定一个 8 ，一般可能不会超过 8，默认为 16
             Map<String, List<Article>> map = new HashMap<>(8);
             for (Article article : collect) {
-                int start = article.getUrl().indexOf("\\") + 1;
-                if (start == -1) {
+                int end = article.getUrl().lastIndexOf("\\");
+                if (end == -1) {
                     throw new RuntimeException("start is -1 in " + article);
                 }
-                int end = article.getUrl().indexOf("\\", start);
-                if (end > -1) {
+                int start = article.getUrl().substring(0, end).lastIndexOf("\\") + 1;
+                if (!lib.getName().equals(article.getUrl().substring(start, end))) {
                     String key = article.getUrl().substring(start, end);
                     List<Article> articles = map.computeIfAbsent(key, k -> new ArrayList<>());
                     articles.add(article);
@@ -55,8 +68,7 @@ public class CollapsibleHandler extends AbstractLibraryTemplateHandler {
                     map.entrySet()
                        .stream()
                        .map(entry -> new ArchiveIndex(entry.getKey(), entry.getValue()))
-                       .sorted()
-                       .collect(Collectors.toList());
+                       .sorted().collect(Collectors.toList());
             String renderContent = FileUtil.render(new CollapsibleTemplate(site, lib.getName(), archiveIndices));
 
             // 输出
@@ -64,12 +76,6 @@ public class CollapsibleHandler extends AbstractLibraryTemplateHandler {
             LoggerUtil.PROCESSOR_LOGGER.info(resolve.toAbsolutePath().normalize().toFile().getPath());
             FileUtil.createFile(resolve);
             Files.write(resolve, renderContent.getBytes(StandardCharsets.UTF_8));
-
-            // 生成 index.html
-            Path path = resolve.resolveSibling("index.html");
-            if (Files.notExists(path)) {
-                Files.write(path, renderContent.getBytes(StandardCharsets.UTF_8));
-            }
         }
 
     }
