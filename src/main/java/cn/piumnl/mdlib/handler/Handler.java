@@ -17,21 +17,52 @@ public interface Handler {
     void process(Site site) throws Exception;
 
     /**
+     * 刷新操作
+     *
+     * @param site
+     * @throws Exception
+     */
+    void refresh(Site site) throws Exception;
+
+    /**
+     * 初始化操作
+     *
      * @param site
      * @throws Exception
      */
     static void initHandler(Site site) throws Exception {
         // 复制静态资源
-        new StaticHandler().process(site);
+        StaticHandler.getInstance().process(site);
         // 渲染 md
-        new MarkdownHandler().process(site);
+        MarkdownHandler.getInstance().process(site);
         // List 配置
-        new ListHandler().process(site);
+        ListHandler.getInstance().process(site);
         // Collapsible 配置
-        new CollapsibleHandler().process(site);
+        CollapsibleHandler.getInstance().process(site);
         // Single 配置
-        new SingleHandler().process(site);
+        SingleHandler.getInstance().process(site);
         // code 处理
-        new CodeTreeHandler().process(site);
+        CodeTreeHandler.getInstance().process(site);
+    }
+
+    /**
+     * 刷新操作
+     *
+     * @param site
+     * @throws Exception
+     */
+    static void refreshHandler(Site site) throws Exception {
+        // 复制静态资源
+        StaticHandler.getInstance().refresh(site);
+        // 渲染 md
+        MarkdownHandler.getInstance().refresh(site);
+        // List 配置
+        ListHandler.getInstance().refresh(site);
+        // Collapsible 配置
+        CollapsibleHandler.getInstance().refresh(site);
+        // Single 配置
+        SingleHandler.getInstance().refresh(site);
+        // code 处理
+        CodeTreeHandler.getInstance().refresh(site);
     }
 }
