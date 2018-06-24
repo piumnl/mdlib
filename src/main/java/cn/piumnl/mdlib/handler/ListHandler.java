@@ -21,10 +21,24 @@ import cn.piumnl.mdlib.util.LoggerUtil;
  */
 public class ListHandler extends AbstractLibraryTemplateHandler {
 
+    private static final ListHandler HANDLER = new ListHandler();
+
+    private ListHandler() {
+    }
+
+    public static ListHandler getInstance() {
+        return HANDLER;
+    }
+
+    @Override
+    public void refresh(Site site) throws Exception {
+        // todo for piumnl: refresh
+    }
+
     @Override
     public void process(Site site) throws IOException {
         for (Library lib : site.getList()) {
-            List<Article> collect = getArticles(site, lib, site.getAllFile());
+            List<Article> collect = getArticles(site, lib);
 
             Collections.sort(collect);
 
@@ -37,12 +51,6 @@ public class ListHandler extends AbstractLibraryTemplateHandler {
             LoggerUtil.PROCESSOR_LOGGER.info(resolve.toAbsolutePath().normalize().toFile().getPath());
             FileUtil.createFile(resolve);
             Files.write(resolve, renderContent.getBytes(StandardCharsets.UTF_8));
-
-            // 生成 index.html
-            Path path = resolve.resolveSibling("index.html");
-            if (Files.notExists(path)) {
-                Files.write(path, renderContent.getBytes(StandardCharsets.UTF_8));
-            }
         }
     }
 }
