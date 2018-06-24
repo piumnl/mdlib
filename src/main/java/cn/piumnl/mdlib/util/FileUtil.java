@@ -88,8 +88,8 @@ public class FileUtil {
      * @param targetPath 目标文件目录
      * @throws IOException
      */
-    public static void copyFolder(File sourcePath, Path targetPath) throws IOException {
-        copyFolder(sourcePath, targetPath, FileUtil::copy);
+    public static void copyDirectory(File sourcePath, Path targetPath) throws IOException {
+        copyDirectory(sourcePath, targetPath, FileUtil::copy);
     }
 
     /**
@@ -102,7 +102,28 @@ public class FileUtil {
         Files.copy(source.toPath(), target.toPath());
     }
 
-    public static void copyFolder(File sourcePath, Path targetPath, FileFuncational<File> consumer)
+    /**
+     * 复制目录
+     * @param sourcePath 源文件目录
+     * @param targetPath 目标文件目录
+     * @param consumer 如何复制文件
+     * @throws IOException
+     */
+    public static void copyDirectory(File sourcePath, Path targetPath, FileFuncational<File> consumer)
+            throws IOException {
+        copyDirectory(sourcePath, targetPath, consumer, true);
+    }
+
+    /**
+     * 复制目录
+     * @param sourcePath 源文件目录
+     * @param targetPath 目标文件目录
+     * @param consumer 如何复制文件
+     * @param existNeedDelete 是否需要判断删除文件
+     * @throws IOException
+     */
+    public static void copyDirectory(File sourcePath, Path targetPath, FileFuncational<File> consumer,
+                                     boolean existNeedDelete)
             throws IOException {
         //源目录不存在
         if (!sourcePath.exists()) {
@@ -121,13 +142,15 @@ public class FileUtil {
         for (File path : collect) {
             Path target = Paths.get(targetPath.toString(), path.getName());
             if (!path.isDirectory()) {
-                if (Files.exists(target)) {
-                    Files.delete(target);
+                if (existNeedDelete) {
+                    if (Files.exists(target)) {
+                        Files.delete(target);
+                    }
                 }
 
                 consumer.accept(path, target.toFile());
             } else {
-                copyFolder(path, target, consumer);
+                copyDirectory(path, target, consumer, existNeedDelete);
             }
         }
     }
@@ -193,7 +216,7 @@ public class FileUtil {
      * @throws IOException 当读取文件出现 IO 问题时抛出
      */
     public static String readFile(File file) throws IOException {
-        LoggerUtil.MDLIB_LOGGER.fine(StringUtil.format("read file '{}'!", file.getAbsolutePath()));
+        LoggerUtil.MDLIB_LOGGER.debug(StringUtil.format("read file '{}'!", file.getAbsolutePath()));
         List<String> allLines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
         StringBuilder builder = new StringBuilder();
         for (String line : allLines) {
