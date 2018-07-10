@@ -1,5 +1,7 @@
 package cn.piumnl.mdlib.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -201,5 +203,19 @@ public interface StringUtil {
         }
 
         return builder.toString();
+    }
+
+    /**
+     * 对 URL 编码格式进行解码，并去除 {@link UnsupportedEncodingException} 异常
+     *
+     * @param data
+     * @return
+     */
+    static String decodeURL(String data) {
+        try {
+            return URLDecoder.decode(data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
