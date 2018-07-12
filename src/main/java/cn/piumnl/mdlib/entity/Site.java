@@ -7,10 +7,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+
+import cn.piumnl.mdlib.prop.MdlibProperties;
 
 /**
  * @author piumnl
@@ -22,6 +22,8 @@ public class Site implements Serializable {
     private static final long serialVersionUID = -1764513206170007080L;
 
     public static final String STATIC_ML_ICO = "static/ml.ico";
+
+    private static Site site;
 
     private MdlibProperties properties;
 
@@ -40,25 +42,19 @@ public class Site implements Serializable {
     public Site(MdlibProperties properties) {
         this.properties = properties;
 
-        this.list = convertLibrary(properties.getList());
-        this.collapsible = convertLibrary(properties.getCollapsible());
-        this.single = convertLibrary(properties.getSingle());
+        this.list = properties.getList();
+        this.collapsible = properties.getCollapsible();
+        this.single = properties.getSingle();
         this.codePath = properties.getCode();
 
         this.out = Paths.get(properties.getOutPath());
 
         this.staticPath = getMdStaticPath(properties);
+        site = this;
     }
 
-    private List<Library> convertLibrary(Map<String, List<String>> stream) {
-        List<Library> result = new ArrayList<>(stream.size());
-        for (Map.Entry<String, List<String>> entry : stream.entrySet()) {
-            if (entry.getValue() != null && entry.getValue().size() > 0) {
-                result.add(new Library(entry.getKey(), entry.getValue()));
-            }
-        }
-
-        return result;
+    public static Site getInstance() {
+        return site;
     }
 
     private List<File> getMdStaticPath(MdlibProperties properties) {
@@ -81,7 +77,7 @@ public class Site implements Serializable {
 
         Path codePath = Paths.get(getCodePath());
         if (Files.exists(codePath)) {
-            libraries.add(new Library("代码库", Collections.singletonList("code")));
+            libraries.add(new Library("代码库", "code"));
         }
         return libraries;
     }
