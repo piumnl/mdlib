@@ -47,6 +47,10 @@ public class ServerRequest {
 
         // 获得请求的资源的地址
         resourcePath = header.split(" ")[1];
+        int endIndex = resourcePath.indexOf("?");
+        if (endIndex != -1) {
+            resourcePath = resourcePath.substring(0, endIndex);
+        }
         LOGGER.trace("\tresource path:" + resourcePath);
 
         if ("/".equals(resourcePath)) {
