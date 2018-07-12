@@ -1,7 +1,6 @@
 package cn.piumnl.mdlib.entity;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 
 import cn.piumnl.mdlib.util.StringUtil;
@@ -21,14 +20,14 @@ public class Library implements Serializable {
     /**
      * 该库所存放的文件所在目录，此处可以为多个目录
      */
-    private List<String> dir;
+    private String dir;
 
     /**
      * 页面地址
      */
     private String url;
 
-    public Library(String name, List<String> dir) {
+    public Library(String name, String dir) {
         if (StringUtil.isEmpty(name)) {
             throw new RuntimeException("lib is empty!");
         }
@@ -47,11 +46,11 @@ public class Library implements Serializable {
         this.name = name;
     }
 
-    public List<String> getDir() {
+    public String getDir() {
         return dir;
     }
 
-    public void setDir(List<String> dir) {
+    public void setDir(String dir) {
         this.dir = dir;
     }
 

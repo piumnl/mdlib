@@ -1,10 +1,10 @@
-package cn.piumnl.mdlib.entity;
+package cn.piumnl.mdlib.prop;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import cn.piumnl.mdlib.annotation.Property;
+import cn.piumnl.mdlib.entity.Library;
 
 /**
  * 注入 application.properties 文件的值到本类中
@@ -49,19 +49,19 @@ public class MdlibProperties {
      * 列表类型的文章排列
      */
     @Property(value = "lib.mixed", isPrefix = true)
-    private Map<String, List<String>> list;
+    private List<Library> list;
 
     /**
      * 可折叠类型的文章排列
      */
     @Property(value = "lib.module", isPrefix = true)
-    private Map<String, List<String>> collapsible;
+    private List<Library> collapsible;
 
     /**
      * 单文章页
      */
     @Property(value = "lib.single", isPrefix = true)
-    private Map<String, List<String>> single;
+    private List<Library> single;
 
     /**
      * 输出目录
@@ -102,15 +102,15 @@ public class MdlibProperties {
         return outPath;
     }
 
-    public Map<String, List<String>> getList() {
+    public List<Library> getList() {
         return list;
     }
 
-    public Map<String, List<String>> getCollapsible() {
+    public List<Library> getCollapsible() {
         return collapsible;
     }
 
-    public Map<String, List<String>> getSingle() {
+    public List<Library> getSingle() {
         return single;
     }
 

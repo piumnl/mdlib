@@ -1,15 +1,12 @@
 package cn.piumnl.mdlib.util;
 
+import cn.piumnl.mdlib.annotation.Property;
+import cn.piumnl.mdlib.entity.Library;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import cn.piumnl.mdlib.annotation.Property;
 
 /**
  * @author piumnl
@@ -43,7 +40,7 @@ public class RefelectUtil {
                 }
 
                 if (annotation.isPrefix()) {
-                    Map<String, List<String>> map = doPrefixKey(properties, annotation.value(), field);
+                    List<Library> map = doPrefixKey(properties, annotation.value(), field);
                     setFieldValue(field, t, map, annotation.separator());
                 } else {
                     String value = properties.getProperty(annotation.value(), annotation.defaultValue());
@@ -57,20 +54,20 @@ public class RefelectUtil {
         }
     }
 
-    private static Map<String, List<String>> doPrefixKey(Properties properties,
+    private static List<Library> doPrefixKey(Properties properties,
                                                          String annotation,
                                                          Field field) {
         // 此字段的类型必须为 Map 的子类
-        if (!Map.class.isAssignableFrom(field.getType())) {
-            throw new RuntimeException(StringUtil.format("字段 '{}' 的类型应该是Map", field.getName()));
-        }
+        // if (!Library.class.isAssignableFrom(field.getType())) {
+        //     throw new RuntimeException(StringUtil.format("字段 '{}' 的类型应该是 Library", field.getName()));
+        // }
 
-        Map<String, List<String>> map = new HashMap<>(properties.size());
+        List<Library> map = new ArrayList<>();
         for (String key : properties.stringPropertyNames()) {
             // 避免出现意外中的值
             if (canInjectValue(properties, annotation, key)) {
                 int indexOf = annotation.length() + ".".length();
-                map.put(key.substring(indexOf), getValueList(properties, key));
+                map.add(new Library(key.substring(indexOf), properties.getProperty(key, "")));
             }
         }
 
@@ -95,9 +92,9 @@ public class RefelectUtil {
      * @param key key 值
      * @return value 转换为 {@link List<String>} 后的值
      */
-    private static List<String> getValueList(Properties properties, String key) {
-        return Arrays.asList(properties.getProperty(key, "").split(","));
-    }
+    // private static List<String> getValueList(Properties properties, String key) {
+    //     return Arrays.asList(properties.getProperty(key, "").split(","));
+    // }
 
     /**
      * 为字段设置值，支持基本类型 + List<String> + Set<String> + String[]
@@ -129,9 +126,9 @@ public class RefelectUtil {
             } else if (field.getType().isArray()) {
                 field.set(obj, value.toString().split(separator));
             } else if (List.class.isAssignableFrom(field.getType())) {
-                field.set(obj, Arrays.asList(value.toString().split(separator)));
+                field.set(obj, value);
             } else if (Set.class.isAssignableFrom(field.getType())) {
-                field.set(obj, Arrays.stream(value.toString().split(separator)).collect(Collectors.toSet()));
+                field.set(obj, value);
             } else {
                 field.set(obj, value);
             }
