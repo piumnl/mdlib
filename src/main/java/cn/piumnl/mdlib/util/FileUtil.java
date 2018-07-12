@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
+import com.vladsch.flexmark.ast.Heading;
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -25,6 +26,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
+import cn.piumnl.mdlib.entity.RenderFile;
 import cn.piumnl.mdlib.template.LibraryTemplate;
 
 /**
@@ -264,7 +266,7 @@ public class FileUtil {
      * @param content md 文档内容
      * @return 渲染后的内容
      */
-    public static String renderContent(String content) {
+    public static RenderFile renderContent(String content) {
         // markdown to image
         MutableDataSet options = new MutableDataSet();
         options.setFrom(ParserEmulationProfile.MARKDOWN);
@@ -273,7 +275,14 @@ public class FileUtil {
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
 
         Node document = parser.parse(content.replaceAll("\r\n", "\n"));
-        return renderer.render(document);
+        Node firstChild = document.getFirstChild();
+        if (firstChild instanceof Heading
+                && ((Heading) firstChild).getLevel() == 1
+                && StringUtil.isNotEmpty(firstChild.getChildChars())) {
+            return new RenderFile(firstChild.getChildChars().toString(), renderer.render(document));
+        } else {
+            return new RenderFile(null, renderer.render(document));
+        }
     }
 
     //endregion

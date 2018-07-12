@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.piumnl.mdlib.entity.RenderFile;
 import cn.piumnl.mdlib.entity.Site;
 import cn.piumnl.mdlib.template.AbstractLibraryTemplate;
 import cn.piumnl.mdlib.util.FileUtil;
@@ -33,8 +34,12 @@ public class MarkdownTemplate extends AbstractLibraryTemplate {
         this.lastModifiedTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(zonedDateTime);
     }
 
+    public MarkdownTemplate(Site site, RenderFile renderFile, String name, long lastModifiedTime) {
+        this(site, renderFile.hasTitle() ? renderFile.getTitle() : name, renderFile.getContent(), lastModifiedTime);
+    }
+
     public MarkdownTemplate(Site site, File file) throws IOException {
-        this(site, file.getName(), FileUtil.renderContent(FileUtil.readFile(file)), file.lastModified());
+        this(site, FileUtil.renderContent(FileUtil.readFile(file)), file.getName(), file.lastModified());
     }
 
     @Override

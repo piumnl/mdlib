@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.piumnl.mdlib.entity.RenderFile;
 import cn.piumnl.mdlib.entity.Site;
 import cn.piumnl.mdlib.template.AbstractLibraryTemplate;
 import cn.piumnl.mdlib.util.FileUtil;
@@ -25,9 +26,14 @@ public class SingleTemplate extends AbstractLibraryTemplate {
         this.content = content;
     }
 
-    public SingleTemplate(Site site, File file) throws IOException {
-        this(site, file.getName(), FileUtil.renderContent(FileUtil.readFile(file)));
+    public SingleTemplate(Site site, RenderFile renderFile, String name) {
+        this(site, renderFile.hasTitle() ? renderFile.getTitle() : name, renderFile.getContent());
     }
+
+    public SingleTemplate(Site site, File file) throws IOException {
+        this(site, FileUtil.renderContent(FileUtil.readFile(file)), file.getName());
+    }
+
     @Override
     public Map<String, Object> dataModel() {
         Map<String, Object> listLibMap = new HashMap<>(6);
