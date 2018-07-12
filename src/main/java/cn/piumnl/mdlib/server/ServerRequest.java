@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import cn.piumnl.mdlib.Application;
 import cn.piumnl.mdlib.util.IOUtil;
 import cn.piumnl.mdlib.util.LoggerUtil;
 
@@ -32,9 +30,12 @@ public class ServerRequest {
 
     private ServerContext context;
 
-    public ServerRequest(InputStream inputStream, ServerContext context) {
+    private Path rootPath;
+
+    public ServerRequest(InputStream inputStream, ServerContext context, Path rootPath) {
         this.inputStream = inputStream;
         this.context = context;
+        this.rootPath = rootPath.toAbsolutePath().normalize();
     }
 
     public void init() throws IOException {
@@ -57,7 +58,7 @@ public class ServerRequest {
         suffix = names[names.length - 1];
         mime = MIME.get(suffix);
 
-        realPath = Paths.get(Application.outPath, URLDecoder.decode(resourcePath, "UTF-8"));
+        realPath = rootPath.resolve(URLDecoder.decode(resourcePath, "UTF-8").substring(1));
     }
 
     public String getResourcePath() {

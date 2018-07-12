@@ -57,7 +57,7 @@ public class ServerOperated {
             out.println("对不起，您寻找的资源在本服务器上不存在");
             out.close();
 
-            LOGGER.info(StringUtil.format("Not Found '{}'", resource));
+            LOGGER.info(StringUtil.format("Not Found '{}'", StringUtil.decodeURL(resource)));
         }
     }
 

@@ -3,6 +3,7 @@ package cn.piumnl.mdlib.server;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.file.Path;
 
 /**
  * @author piumnl
@@ -15,8 +16,8 @@ public class ServerContext implements Runnable {
 
     private ServerResponse response;
 
-    public ServerContext(Socket socket) throws IOException {
-        this.request = new ServerRequest(socket.getInputStream(), this);
+    public ServerContext(Socket socket, Path out) throws IOException {
+        this.request = new ServerRequest(socket.getInputStream(), this, out);
         this.response = new ServerResponse(socket.getOutputStream(), this);
     }
 
