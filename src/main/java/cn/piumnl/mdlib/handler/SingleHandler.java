@@ -45,7 +45,7 @@ public class SingleHandler extends AbstractLibraryTemplateHandler {
             }
 
             String renderContent = FileUtil.render(new SingleTemplate(site, file));
-            writeFile(site, lib.getUrl(), renderContent);
+            writeFile(site.getOut().resolve(lib.getUrl()), renderContent);
             fileInfo.put(file.getAbsolutePath(), file.lastModified());
         }
     }
@@ -56,24 +56,22 @@ public class SingleHandler extends AbstractLibraryTemplateHandler {
         for (Library lib : site.getSingle()) {
             File file = getSingleFile(lib);
             String renderContent = FileUtil.render(new SingleTemplate(site, file));
-            writeFile(site, lib.getUrl(), renderContent);
+            writeFile(site.getOut().resolve(lib.getUrl()), renderContent);
             fileInfo.put(file.getAbsolutePath(), file.lastModified());
         }
     }
 
     /**
      * 将源文件渲染到目标文件中
-     * @param site
-     * @param filePath
-     * @param renderContent
-     * @throws IOException
+     * @param writeFile 要写入的文件
+     * @param renderContent 渲染的内容
+     * @throws IOException IO 异常
      */
-    private void writeFile(Site site, String filePath, String renderContent) throws IOException {
-        Path resolve = site.getOut().resolve(filePath);
-        LoggerUtil.PROCESSOR_LOGGER.info("渲染文件：{}", resolve.toAbsolutePath().normalize());
-        Files.deleteIfExists(resolve);
-        FileUtil.createFile(resolve);
-        Files.write(resolve, renderContent.getBytes(StandardCharsets.UTF_8));
+    private void writeFile(Path writeFile, String renderContent) throws IOException {
+        LoggerUtil.PROCESSOR_LOGGER.info("渲染文件：{}", writeFile.toAbsolutePath().normalize());
+        Files.deleteIfExists(writeFile);
+        FileUtil.createFile(writeFile);
+        Files.write(writeFile, renderContent.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
