@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import cn.piumnl.mdlib.entity.Library;
@@ -14,7 +13,6 @@ import cn.piumnl.mdlib.entity.Site;
 import cn.piumnl.mdlib.template.index.SingleTemplate;
 import cn.piumnl.mdlib.util.FileUtil;
 import cn.piumnl.mdlib.util.LoggerUtil;
-import cn.piumnl.mdlib.util.StringUtil;
 
 /**
  * @author piumnl
@@ -71,8 +69,8 @@ public class SingleHandler extends AbstractLibraryTemplateHandler {
      * @throws IOException
      */
     private void writeFile(Site site, String filePath, String renderContent) throws IOException {
-        Path resolve = resolvePath(site, filePath);
-        LoggerUtil.PROCESSOR_LOGGER.info("渲染文件：" + resolve.toAbsolutePath().normalize().toString());
+        Path resolve = site.getOut().resolve(filePath);
+        LoggerUtil.PROCESSOR_LOGGER.info("渲染文件：{}", resolve.toAbsolutePath().normalize());
         Files.deleteIfExists(resolve);
         FileUtil.createFile(resolve);
         Files.write(resolve, renderContent.getBytes(StandardCharsets.UTF_8));
@@ -84,18 +82,11 @@ public class SingleHandler extends AbstractLibraryTemplateHandler {
      * @return 指定文件的 File 对象
      */
     private File getSingleFile(Library lib) {
-        List<String> dir = lib.getDir();
-        if (dir.size() != 1) {
-            String message = StringUtil.format("single 名字为 '{}' 的值应该只有一个！但是找到 {}！请勿使用逗号分隔",
-                    lib.getName(), lib.getDir().size());
-            throw new RuntimeException(message);
-        } else {
-            File file = new File(dir.get(0));
-            if (file.isDirectory()) {
-                throw new RuntimeException("single 的值应该为一个文件，而不是目录。");
-            }
-
-            return file;
+        File file = new File(lib.getDir());
+        if (file.isDirectory()) {
+            throw new RuntimeException("single 的值应该为一个文件，而不是目录。");
         }
+
+        return file;
     }
 }
