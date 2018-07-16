@@ -33,8 +33,6 @@ public interface Handler {
     static void initHandler(Site site) throws Exception {
         // 复制静态资源
         StaticHandler.getInstance().process(site);
-        // 渲染 md
-        MarkdownHandler.getInstance().process(site);
         // List 配置
         ListHandler.getInstance().process(site);
         // Collapsible 配置
@@ -56,8 +54,6 @@ public interface Handler {
     static void refreshHandler(Site site) throws Exception {
         // 复制静态资源
         StaticHandler.getInstance().refresh(site);
-        // 渲染 md
-        MarkdownHandler.getInstance().refresh(site);
         // List 配置
         ListHandler.getInstance().refresh(site);
         // Collapsible 配置
