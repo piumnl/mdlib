@@ -1,11 +1,15 @@
 package cn.piumnl.mdlib.handler;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import cn.piumnl.mdlib.entity.Article;
 import cn.piumnl.mdlib.entity.Library;
@@ -23,6 +27,8 @@ public class ListHandler extends AbstractLibraryTemplateHandler {
 
     private static final ListHandler HANDLER = new ListHandler();
 
+    private Map<Library, List<Article>> cache;
+
     private ListHandler() {
     }
 
@@ -32,13 +38,18 @@ public class ListHandler extends AbstractLibraryTemplateHandler {
 
     @Override
     public void refresh(Site site) throws Exception {
-        // todo for piumnl: refresh
+        for (Map.Entry<Library, List<Article>> entry : cache.entrySet()) {
+            File originPath = new File(entry.getKey().getDir());
+            updateFile(originPath, entry.getValue().stream().collect(Collectors.toMap(Article::getUrl, o -> o)));
+        }
     }
 
     @Override
     public void process(Site site) throws IOException {
+        cache = new ConcurrentHashMap<>(site.getList().size());
         for (Library lib : site.getList()) {
-            List<Article> collect = getArticles(site, lib);
+            List<Article> collect = getArticles(site.getOut(), lib.getDir());
+            cache.put(lib, collect);
 
             Collections.sort(collect);
 
@@ -46,7 +57,7 @@ public class ListHandler extends AbstractLibraryTemplateHandler {
             String renderContent = FileUtil.render(new ListTemplate(site, lib.getName(), collect));
 
             // 输出
-            Path resolve = resolvePath(site, lib.getUrl());
+            Path resolve = site.getOut().resolve(lib.getUrl());
 
             LoggerUtil.PROCESSOR_LOGGER.info(resolve.toAbsolutePath().normalize().toFile().getPath());
             FileUtil.createFile(resolve);
