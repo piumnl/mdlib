@@ -60,6 +60,7 @@ public class Site implements Serializable {
     private List<File> getMdStaticPath(MdlibProperties properties) {
         return Arrays.stream(properties.getResourcePaths())
                      .map(File::new)
+                     .filter(file -> file.isFile() || file.isDirectory())
                      .collect(Collectors.toList());
     }
 
