@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import cn.piumnl.mdlib.entity.MdlibProperties;
+import cn.piumnl.mdlib.prop.MdlibProperties;
 
 /**
  * @author piumnl
