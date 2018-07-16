@@ -10,19 +10,27 @@ import java.nio.file.Path;
  */
 public class Article implements Serializable, Comparable<Article> {
 
+    private static final long serialVersionUID = 2914595993457310665L;
+
     private String name;
 
     private String url;
+
+    private Long updateTime;
 
     public Article(String name, String url) {
         this.name = name;
         this.url = url;
     }
 
-    public Article(Path path) {
-        this.name = path.toFile().getName();
-        this.name = this.name.substring(0, this.name.lastIndexOf("."));
+    public Article(Path path, String name, long lastModified) {
+        this.name = name;
+        int endIndex = this.name.lastIndexOf(".");
+        if (endIndex != -1) {
+            this.name = this.name.substring(0, endIndex);
+        }
         this.url = path.toString();
+        this.updateTime = lastModified;
     }
 
     public String getName() {
@@ -41,16 +49,25 @@ public class Article implements Serializable, Comparable<Article> {
         this.url = url;
     }
 
-    @Override
-    public String toString() {
-        return "Article{" +
-                "name='" + name + '\'' +
-                ", url='" + url + '\'' +
-                '}';
+    public Long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Long updateTime) {
+        this.updateTime = updateTime;
     }
 
     @Override
     public int compareTo(Article article) {
         return this.getName().compareTo(article.getName());
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }

@@ -61,4 +61,33 @@ public class Library implements Serializable {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Library library = (Library) o;
+
+        if (name != null ? !name.equals(library.name) : library.name != null) return false;
+        if (dir != null ? !dir.equals(library.dir) : library.dir != null) return false;
+        return url != null ? url.equals(library.url) : library.url == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (dir != null ? dir.hashCode() : 0);
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Library{" +
+                "name='" + name + '\'' +
+                ", dir='" + dir + '\'' +
+                ", url='" + url + '\'' +
+                '}';
+    }
 }
