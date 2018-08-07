@@ -37,8 +37,8 @@ public class Application {
     }
 
     private static void initLogger() {
-        InputStream stream = Application.class.getClassLoader().
-                getResourceAsStream("logging.properties");
+        InputStream stream =
+                Application.class.getClassLoader().getResourceAsStream("logging.properties");
         try {
             LogManager.getLogManager().readConfiguration(stream);
         } catch (IOException e) {
