@@ -98,38 +98,22 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-shade-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <!-- 应用名（最后压缩包的名字） -->
-                    <finalName>${project.name}</finalName>
-                    <!-- 是否添加 AssemblyId 后缀 -->
-                    <!--<appendAssemblyId>false</appendAssemblyId>-->
-                    <!-- 手动设置打包的描述文件 -->
-                    <!--<descriptors>-->
-                        <!-- 描述文件路径 -->
-                        <!--<descriptor>src/main/resources/assembly.xml</descriptor>-->
-                    <!--</descriptors>-->
-                    <archive>
-                        <manifest>
+                    <!-- 修改 dependency-reduced-pom.xml 生成的位置 -->
+                    <!--<dependencyReducedPomLocation>${basedir}/target/dependency-reduced-pom.xml</dependencyReducedPomLocation>-->
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <mainClass>cn.piumnl.mdlib.Application</mainClass>
-                        </manifest>
-                    </archive>
-                    <!--配置描述-->
-                    <descriptorRefs>
-                        <!-- 官方提供的一种打包方式 fat jar，网上有人说不推荐使用 -->
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                        </transformer>
+                    </transformers>
                 </configuration>
                 <executions>
-                    <!-- 配置执行器 -->
                     <execution>
-                        <id>${project.name}</id>
-                        <!-- 绑定到package生命周期阶段上 -->
                         <phase>package</phase>
                         <goals>
-                            <!-- 只运行一次 -->
-                            <goal>single</goal>
+                            <goal>shade</goal>
                         </goals>
                     </execution>
                 </executions>
