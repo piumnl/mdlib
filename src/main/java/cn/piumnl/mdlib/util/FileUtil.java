@@ -10,21 +10,25 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-
-import com.vladsch.flexmark.ast.Heading;
-import com.vladsch.flexmark.ast.Node;
-import com.vladsch.flexmark.ext.tables.TablesExtension;
-import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.parser.ParserEmulationProfile;
-import com.vladsch.flexmark.util.options.MutableDataSet;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+
+import com.vladsch.flexmark.Extension;
+import com.vladsch.flexmark.ast.Heading;
+import com.vladsch.flexmark.ast.Node;
+import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
+import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.ext.toc.SimTocExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.parser.ParserEmulationProfile;
+import com.vladsch.flexmark.util.options.MutableDataSet;
 
 import cn.piumnl.mdlib.entity.RenderFile;
 import cn.piumnl.mdlib.template.LibraryTemplate;
@@ -268,9 +272,16 @@ public class FileUtil {
      */
     public static RenderFile renderContent(String content) {
         // markdown to image
+
+        List<Extension> extensions = new ArrayList<>();
+        extensions.add(TablesExtension.create());
+        extensions.add(SimTocExtension.create());
+        extensions.add(AnchorLinkExtension.create());
+        extensions.add(FootnoteExtension.create());
+
         MutableDataSet options = new MutableDataSet();
         options.setFrom(ParserEmulationProfile.MARKDOWN);
-        options.set(Parser.EXTENSIONS, Collections.singletonList(TablesExtension.create()));
+        options.set(Parser.EXTENSIONS, extensions);
         Parser parser = Parser.builder(options).build();
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
 
