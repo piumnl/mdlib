@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="${uri}/static/github.css" type="text/css"/>
     <link rel="stylesheet" href="${uri}/static/mdlib.css" type="text/css"/>
     <link href="${uri}/static/css/icon.css" rel="stylesheet">
+    <link href="${uri}/static/css/animate.css" rel="stylesheet">
     <style>
         #content {
             width:80%;
@@ -30,7 +31,7 @@
     </style>
 </head>
 <body>
-<div class="mth-layout mth-shadow mth-card content">
+<div class="mth-layout mth-shadow mth-card content animated fadeInLeft">
     <span title="最后一次修改时间"><i class="material-icons">error</i> ${lastModifiedTime}</span>
     ${content}
 </div>

@@ -16,6 +16,7 @@
     <link type="text/css" rel="stylesheet" href="${uri}/static/css/materialize.min.css" media="screen,projection" />
     <link rel="stylesheet" href="${uri}/static/github.css" type="text/css"/>
     <link rel="stylesheet" href="${uri}/static/mdlib.css" type="text/css"/>
+    <link href="${uri}/static/css/animate.css" rel="stylesheet">
     <style>
         nav {
             background-color: #fff;
@@ -40,7 +41,7 @@
 </head>
 <body>
     <nav>
-        <div class="nav-wrapper">
+        <div class="nav-wrapper animated fadeInLeft">
             <div class="mdlib-title">
                 <a href="#" class="brand-logo">${siteName}</a>
                 <ul id="nav-mobile" class="right hide-on-med-and-down">
