@@ -22,3 +22,4 @@ build/
 dist/
 /mdlib
 /.mdlib
+dependency-reduced-pom.xml
